@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Building2, Check, MapPin, RefreshCw, Search, Star } from "lucide-react";
 import { buscarNegocios, concorrentesSugeridos, type Negocio } from "@/lib/busca-mock";
+import { detectarSegmento, listaSegmentos, segmentos, type SegmentoId } from "@/lib/segmentos";
 import { Analisando } from "./Analisando";
 
 type Passo = "busca" | "confirmar" | "contato" | "analisando";
@@ -164,6 +165,10 @@ function PassoBusca({ onEscolher }: { onEscolher: (n: Negocio) => void }) {
 }
 
 function PassoConfirmar({ negocio, onVoltar, onSeguir }: { negocio: Negocio; onVoltar: () => void; onSeguir: () => void }) {
+  // Detecção pela categoria do Google, sempre confirmável. Sem correspondência, cai no perfil genérico.
+  const [segmento, setSegmento] = useState<SegmentoId>(() => detectarSegmento(negocio.categoria));
+  const termoBusca = `${segmentos[segmento].nome.toLowerCase()} em ${negocio.endereco.split("·").pop()?.trim().split(",")[0] ?? "sua cidade"}`;
+
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -180,8 +185,33 @@ function PassoConfirmar({ negocio, onVoltar, onSeguir }: { negocio: Negocio; onV
         </div>
       </div>
 
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="tipo-negocio" className="text-[13px] font-semibold text-muted">
+          Tipo de negócio
+        </label>
+        <select
+          id="tipo-negocio"
+          value={segmento}
+          onChange={(e) => setSegmento(e.target.value as SegmentoId)}
+          className="w-full rounded-[var(--radius-control)] border border-line bg-surface px-3.5 py-3 text-[15px] font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+        >
+          {listaSegmentos.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.nome}
+            </option>
+          ))}
+        </select>
+        <p className="text-xs text-faint">
+          {segmento === "generico"
+            ? "Não reconhecemos o seu nicho pela categoria do Google. A análise funciona igual; se algum tipo acima combinar, escolha."
+            : `Identificamos pela categoria no Google (“${negocio.categoria}”). Ajuste se não estiver certo.`}
+        </p>
+      </div>
+
       <div>
-        <p className="mb-2 text-[13px] font-semibold text-muted">Vamos comparar com</p>
+        <p className="mb-2 text-[13px] font-semibold text-muted">
+          Vamos comparar com quem aparece em <span className="text-ink">“{termoBusca}”</span>
+        </p>
         <ul className="flex flex-col divide-y divide-line rounded-[var(--radius-control)] border border-line">
           {concorrentesSugeridos.map((c) => (
             <li key={c.nome} className="flex items-center justify-between gap-3 px-4 py-3">

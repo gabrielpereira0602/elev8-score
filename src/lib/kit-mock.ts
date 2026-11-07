@@ -1,3 +1,5 @@
+import type { Empresa } from "./posts";
+
 // Conteúdo simulado do kit da Clínica Bella Pele. Na fase 3, cada peça é gerada pela IA
 // a partir dos dados do diagnóstico e das respostas do formulário.
 
@@ -130,25 +132,13 @@ export const googleFaltando = [
   { item: "Responder avaliações", detalhe: "8 avaliações estão sem resposta. Use os modelos do kit." },
 ];
 
-export type Post = {
-  semana: number;
-  tipo: "Arte pronta" | "Foto sua";
-  gancho: string;
-  legenda: string;
-  foto?: string;
-};
+// Protótipo: empresas de exemplo para mostrar o kit se adaptando a outros nichos e cores.
 
-export const posts: Post[] = [
-  { semana: 1, tipo: "Arte pronta", gancho: "3 sinais de que sua pele precisa de uma limpeza profunda", legenda: "Cravos que voltam rápido, pele opaca e poros dilatados são os mais comuns. Se você se identificou, sua pele está pedindo uma limpeza profissional. Agende sua avaliação gratuita pelo link da bio." },
-  { semana: 1, tipo: "Foto sua", gancho: "Conheça quem vai cuidar da sua pele", legenda: "Prazer, eu sou a [nome]! Há 6 anos ajudo mulheres de Vinhedo a terem uma pele mais saudável. Aqui o atendimento é individual, sem pressa. Me chama no WhatsApp!", foto: "Você na recepção, sorrindo, com luz natural" },
-  { semana: 1, tipo: "Arte pronta", gancho: "Quanto custa uma limpeza de pele?", legenda: "Aqui na Bella Pele a limpeza profunda é R$ 180, com avaliação da pele e orientação de cuidados em casa incluídas. Sem surpresa no preço." },
-  { semana: 2, tipo: "Foto sua", gancho: "Por dentro da sala de atendimento", legenda: "É aqui que a mágica acontece. Ambiente limpo, tranquilo e preparado para você relaxar enquanto cuida da pele.", foto: "A sala de atendimento arrumada, de frente" },
-  { semana: 2, tipo: "Arte pronta", gancho: "Peeling ou limpeza de pele: qual escolher?", legenda: "A limpeza remove impurezas; o peeling renova a camada superficial da pele. Na avaliação a gente indica o melhor para o seu caso." },
-  { semana: 2, tipo: "Arte pronta", gancho: "O que nossas clientes dizem", legenda: "Cada avaliação nos deixa felizes demais. Obrigada pela confiança! Já foi atendida aqui? Conta sua experiência no Google pelo link da bio." },
-  { semana: 3, tipo: "Foto sua", gancho: "Os produtos que usamos", legenda: "Trabalhamos com dermocosméticos de marcas reconhecidas, escolhidos para cada tipo de pele.", foto: "Os produtos organizados na bancada" },
-  { semana: 3, tipo: "Arte pronta", gancho: "5 cuidados depois da limpeza de pele", legenda: "Protetor solar, nada de maquiagem nas primeiras horas, hidratação... Salve este post para não esquecer!" },
-  { semana: 3, tipo: "Arte pronta", gancho: "Horários desta semana", legenda: "Ainda temos horários na quinta e no sábado. Garanta o seu pelo WhatsApp." },
-  { semana: 4, tipo: "Foto sua", gancho: "Um dia na Bella Pele", legenda: "Do primeiro café ao último atendimento: um pouco da nossa rotina cuidando de vocês.", foto: "Você preparando a sala, sem olhar para a câmera" },
-  { semana: 4, tipo: "Arte pronta", gancho: "Mito ou verdade: limpeza de pele machuca?", legenda: "Mito! Com técnica e produtos certos, o procedimento é tranquilo. Pode haver um leve desconforto na extração, mas nada que tire o seu relaxamento." },
-  { semana: 4, tipo: "Arte pronta", gancho: "Avaliação gratuita da sua pele", legenda: "Não sabe qual tratamento é o ideal para você? Agende uma avaliação gratuita e saia com um plano feito para a sua pele." },
+export const empresasDemo: Empresa[] = [
+  { nome: "Clínica Bella Pele", cidade: "Vinhedo", segmento: "estetica", servico: "a limpeza de pele profunda", preco: "R$ 180", cor: "#B5476B" },
+  { nome: "Belo Sorriso Odontologia", cidade: "Vinhedo", segmento: "odontologia", servico: "clareamento dental", preco: "R$ 900", cor: "#0E8A8A" },
+  { nome: "Moura Advocacia", cidade: "Jundiaí", segmento: "advocacia", servico: "direito trabalhista", cor: "#1F2A44" },
+  { nome: "Cantina da Nonna", cidade: "Vinhedo", segmento: "restaurante", servico: "o almoço executivo", preco: "R$ 39", cor: "#C0392B" },
+  { nome: "Studio Move", cidade: "Valinhos", segmento: "academia", servico: "o plano mensal de pilates", preco: "R$ 290", cor: "#F2C230" },
+  { nome: "Bellatrix Contabilidade", cidade: "Vinhedo", segmento: "generico", servico: "a abertura de empresa", preco: "R$ 600", cor: "#5B4BDB" },
 ];

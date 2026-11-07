@@ -15,6 +15,7 @@ export const negocios: Negocio[] = [
   { id: "bella-studio", nome: "Bella Studio Cabelos", endereco: "R. Monteiro de Barros, 340 · Vinhedo, SP", categoria: "Salão de beleza", nota: 4.8, avaliacoes: 61 },
   { id: "belo-sorriso", nome: "Belo Sorriso Odontologia", endereco: "R. Humberto Pescarini, 88 · Vinhedo, SP", categoria: "Dentista", nota: 4.7, avaliacoes: 142 },
   { id: "padaria", nome: "Padaria Vinhedo Pães", endereco: "Av. dos Imigrantes, 455 · Vinhedo, SP", categoria: "Padaria", nota: 4.4, avaliacoes: 310 },
+  { id: "bellatrix", nome: "Bellatrix Contabilidade", endereco: "R. Barão de Itapura, 77 · Vinhedo, SP", categoria: "Escritório de contabilidade", nota: 4.9, avaliacoes: 18 },
 ];
 
 export const concorrentesSugeridos = [

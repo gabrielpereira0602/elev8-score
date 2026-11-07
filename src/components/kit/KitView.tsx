@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Camera, Check, CheckCircle2, Circle, Clock, Download, ImageIcon, Lightbulb, Printer } from "lucide-react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { Camera, Check, CheckCircle2, Circle, Clock, Download, ImageIcon, Lightbulb, Printer, ShieldAlert, Sparkles } from "lucide-react";
 import {
   bios,
   biosAtual,
@@ -10,16 +11,28 @@ import {
   linkAvaliacao,
   mensagensAvaliacao,
   mensagensWhatsapp,
+  empresasDemo,
   pecas,
-  posts,
   respostasAvaliacao,
   type Peca,
 } from "@/lib/kit-mock";
 import { CopyButton } from "../CopyButton";
 import { Card } from "../ui";
 import { Plaquinha } from "./Plaquinha";
+import { PostArt } from "./PostArt";
+import { gerarPosts } from "@/lib/posts";
+import { segmentos } from "@/lib/segmentos";
 
 const corEmpresa = "#B5476B"; // escolhida pelo empresário no formulário (protótipo)
+
+/** O serviço da Elev8 que resolve cada peça. Aparece no momento em que o empresário vê o trabalho que dá. */
+const servicoElev8: Record<Peca["id"], string> = {
+  avaliacoes: "o seu Google Perfil e as avaliações (SEO local)",
+  whatsapp: "anúncios que trazem mais conversas para o seu WhatsApp",
+  perfil: "a sua identidade visual e as redes sociais",
+  google: "o seu Google Perfil (SEO local)",
+  posts: "a gestão das suas redes sociais",
+};
 
 export function KitView({ empresa }: { empresa: string }) {
   const [ativa, setAtiva] = useState<Peca["id"]>("avaliacoes");
@@ -122,6 +135,15 @@ export function KitView({ empresa }: { empresa: string }) {
                 {feita ? "Aplicada" : "Marcar como aplicada"}
               </button>
             </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-control)] bg-subtle px-4 py-3.5">
+            <p className="text-sm text-muted">
+              <b className="font-semibold text-ink">Prefere não fazer sozinho?</b> A Elev8 aplica isso para você e cuida de {servicoElev8[ativa]}.
+            </p>
+            <Link href="/painel/elev8?plano=pago" className="shrink-0 text-sm font-semibold text-brand hover:underline">
+              Quero que a Elev8 faça
+            </Link>
           </div>
         </Card>
       </div>
@@ -245,12 +267,74 @@ function ConteudoGoogle() {
   );
 }
 
+const coresTeste = ["#B5476B", "#0E8A8A", "#1F2A44", "#C0392B", "#F2C230", "#5B4BDB"];
+
 function ConteudoPosts() {
+  const [indice, setIndice] = useState(0);
+  const [cor, setCor] = useState(empresasDemo[0].cor);
   const [semana, setSemana] = useState(1);
-  const lista = posts.filter((p) => p.semana === semana);
+  const [promptAberto, setPromptAberto] = useState<string | null>(null);
+
+  const empresa = { ...empresasDemo[indice], cor };
+  const seg = segmentos[empresa.segmento];
+  const todos = useMemo(() => gerarPosts(empresa), [empresa.nome, empresa.cor]); // eslint-disable-line react-hooks/exhaustive-deps
+  const lista = todos.filter((p) => p.semana === semana);
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 rounded-[var(--radius-control)] border border-dashed border-warn/50 bg-warn-soft/40 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-warn">Protótipo · teste a adaptação</p>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <label className="flex w-full min-w-0 flex-col gap-1.5 text-sm font-medium sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+            Nicho
+            <select
+              id="teste-nicho"
+              value={indice}
+              onChange={(e) => {
+                const i = Number(e.target.value);
+                setIndice(i);
+                setCor(empresasDemo[i].cor);
+              }}
+              className="w-full min-w-0 max-w-full rounded-[8px] border border-line bg-surface px-2.5 py-1.5 text-sm sm:w-auto"
+            >
+              {empresasDemo.map((d, i) => (
+                <option key={d.nome} value={i}>
+                  {segmentos[d.segmento].nome} · {d.nome}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+            Cor da marca
+            <div className="flex gap-1.5">
+              {coresTeste.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCor(c)}
+                  aria-label={`Usar a cor ${c}`}
+                  aria-pressed={c === cor}
+                  className={`size-6 rounded-full ring-offset-2 transition ${c === cor ? "ring-2 ring-ink" : ""}`}
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-3 rounded-[var(--radius-control)] border border-line p-4">
+        <ShieldAlert size={18} className="mt-0.5 shrink-0 text-muted" aria-hidden />
+        <div className="text-sm">
+          <p className="font-semibold">Regras do seu setor, já seguidas nos posts</p>
+          <ul className="mt-1 flex flex-col gap-0.5 text-muted">
+            {seg.regras.map((r) => (
+              <li key={r}>· {r}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Semanas">
         {[1, 2, 3, 4].map((s) => (
           <button
@@ -270,13 +354,11 @@ function ConteudoPosts() {
 
       <ul className="grid gap-4 md:grid-cols-3">
         {lista.map((p) => (
-          <li key={p.gancho} className="flex flex-col overflow-hidden rounded-[12px] border border-line">
+          <li key={p.gancho + p.semana} className="flex flex-col overflow-hidden rounded-[12px] border border-line">
             {p.tipo === "Arte pronta" ? (
-              <div className="flex aspect-square items-end p-4 text-white" style={{ background: corEmpresa }}>
-                <p className="font-display text-lg font-extrabold leading-tight">{p.gancho}</p>
-              </div>
+              <PostArt gancho={p.gancho} empresa={empresa.nome} cor={empresa.cor} layout={p.layout!} variante={p.variante!} />
             ) : (
-              <div className="flex aspect-square flex-col items-center justify-center gap-2 bg-subtle p-4 text-center">
+              <div className="flex aspect-square flex-col items-center justify-center gap-2 bg-subtle p-5 text-center">
                 <Camera size={26} className="text-muted" aria-hidden />
                 <p className="text-[13px] font-semibold text-muted">Foto sua</p>
                 <p className="text-sm">{p.foto}</p>
@@ -290,14 +372,32 @@ function ConteudoPosts() {
               {p.tipo === "Foto sua" && <p className="text-sm font-semibold">{p.gancho}</p>}
               <p className="line-clamp-4 text-sm leading-relaxed text-muted">{p.legenda}</p>
               <div className="mt-auto flex flex-wrap gap-2 pt-1">
-                <CopyButton texto={p.legenda} rotulo="Copiar legenda" />
+                <CopyButton texto={p.legenda} rotulo="Legenda" />
                 {p.tipo === "Arte pronta" && (
                   <button type="button" className="inline-flex items-center gap-1.5 rounded-[8px] border border-line px-3 py-1.5 text-[13px] font-semibold hover:border-brand hover:text-brand">
                     <Download size={14} aria-hidden />
                     Arte
                   </button>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setPromptAberto(promptAberto === p.gancho ? null : p.gancho)}
+                  aria-expanded={promptAberto === p.gancho}
+                  className="inline-flex items-center gap-1.5 rounded-[8px] border border-line px-3 py-1.5 text-[13px] font-semibold hover:border-brand hover:text-brand"
+                >
+                  <Sparkles size={14} aria-hidden />
+                  Prompt
+                </button>
               </div>
+              {promptAberto === p.gancho && (
+                <div className="mt-1 rounded-[8px] bg-subtle p-3">
+                  <p className="text-xs font-semibold text-muted">
+                    {p.tipo === "Arte pronta" ? "Para recriar a arte no Canva IA ou no ChatGPT" : "Para tirar a foto com cara profissional"}
+                  </p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed">{p.prompt}</p>
+                  <CopyButton texto={p.prompt} rotulo="Copiar prompt" className="mt-2" />
+                </div>
+              )}
             </div>
           </li>
         ))}
