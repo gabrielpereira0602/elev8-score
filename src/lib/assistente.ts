@@ -38,7 +38,7 @@ export function responder(pergunta: string, ctx: Contexto): Resposta {
   if (/(post|publicac|legenda).*(black|natal|dia d|data|promoc)|black friday/.test(p)) {
     if (!s.permitePreco) {
       return {
-        texto: `No seu setor, post de promoção ou desconto vai contra as regras de publicidade (${s.regras[0]}). Em vez disso, use a data para um post informativo:\n\n“Fim de ano chegando? Separe 5 minutos para cuidar do que importa. Se você tem alguma dúvida sobre ${e.servico.replace(/^(o|a|os|as) /, "")}, a gente explica sem compromisso. ${s.acao.charAt(0).toUpperCase() + s.acao.slice(1)} pelo WhatsApp do perfil.”`,
+        texto: `No seu setor, post de promoção ou desconto vai contra as regras de publicidade (${s.regras[0].replace(/\.$/, "")}). Em vez disso, use a data para um post informativo:\n\n“Fim de ano chegando? Separe 5 minutos para cuidar do que importa. Se você tem alguma dúvida sobre ${e.servico.replace(/^(o|a|os|as) /, "")}, a gente explica sem compromisso. ${s.acao.charAt(0).toUpperCase() + s.acao.slice(1)} pelo WhatsApp do perfil.”`,
       };
     }
     return {

@@ -57,6 +57,7 @@ export const leads: Lead[] = [
 
 /** Temperatura calculada sozinha, pelas regras do documento do produto. */
 export function temperatura(l: Lead): Temperatura {
+  if (l.etapa === "perdido") return "frio";
   if (l.etapa === "proposta" || (l.etapa !== "diagnostico" && l.servicosVistos.length > 0)) return "quente";
   if (l.etapa !== "diagnostico" || l.voltouAoPainel) return "morno";
   return "frio";
