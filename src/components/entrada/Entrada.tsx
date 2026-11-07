@@ -40,7 +40,7 @@ export function Entrada() {
   return (
     <div ref={caixaRef} className="rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-[0_12px_40px_-12px_rgba(5,7,13,0.25)] md:p-7">
       <div className="mb-5 flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-faint">Passo {numero} de 3</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-faint">{numero === 3 ? "Último passo" : `Passo ${numero} de 3`}</p>
         <div className="flex gap-1.5" aria-hidden>
           {[1, 2, 3].map((n) => (
             <span key={n} className={`h-1.5 w-8 rounded-full ${n <= numero ? "bg-brand" : "bg-subtle"}`} />
@@ -303,7 +303,7 @@ function PassoContato({ onVoltar, onSeguir }: { onVoltar: () => void; onSeguir: 
       {erros.aceite && <p className="-mt-2 text-[13px] text-bad">{erros.aceite}</p>}
 
       <button type="submit" className={botaoPrimario}>
-        Ver meu Score Digital
+        Ver meu Score Digital grátis
         <ArrowRight size={18} aria-hidden />
       </button>
       <BotaoVoltar onClick={onVoltar} />

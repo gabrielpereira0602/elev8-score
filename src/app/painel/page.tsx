@@ -7,6 +7,7 @@ import { GiftAction } from "@/components/GiftAction";
 import { StageCard } from "@/components/StageCard";
 import { Offer } from "@/components/Offer";
 import { PlanProgress } from "@/components/BottomStrip";
+import { StickyCTA } from "@/components/StickyCTA";
 import { diagnostico as d, kitItens } from "@/lib/mock";
 
 type Props = { searchParams: Promise<{ plano?: string }> };
@@ -60,9 +61,12 @@ export default async function VisaoGeral({ searchParams }: Props) {
         {pago ? (
           <PlanProgress feitas={d.plano.feitas} total={d.plano.total} dias={d.plano.diasParaReavaliacao} />
         ) : (
-          <Offer nota={d.nota} potencial={d.potencialComKit} itens={kitItens} />
+          <div id="oferta" className="scroll-mt-4">
+            <Offer empresa={d.empresa} nota={d.nota} potencial={d.potencialComKit} ranking={d.ranking} itens={kitItens} />
+          </div>
         )}
       </div>
+      {!pago && <StickyCTA />}
     </AppShell>
   );
 }

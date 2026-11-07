@@ -1,26 +1,34 @@
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
-import { faixaScore } from "@/lib/mock";
+import { faixaScore, type Concorrente } from "@/lib/mock";
+import { bios } from "@/lib/kit-mock";
 import { Card, Origem } from "./ui";
 
 type Props = {
+  empresa: string;
   nota: number;
   potencial: number;
+  ranking: Concorrente[];
   itens: { nome: string; detalhe: string }[];
 };
 
 /** Versão grátis: a oferta só aparece depois do valor (problema, exclusivo, presente, etapas). */
-export function Offer({ nota, potencial, itens }: Props) {
+export function Offer({ empresa, nota, potencial, ranking, itens }: Props) {
   const faixaHoje = faixaScore(nota).texto;
   const faixaDepois = faixaScore(potencial).texto;
+  // Meta próxima e com nome: o concorrente de maior nota que o potencial estimado ultrapassa.
+  const ultrapassa = ranking
+    .filter((r) => !r.voce && r.nota > nota && r.nota < potencial)
+    .sort((a, b) => b.nota - a.nota)[0];
+  const [linha1, ...resto] = bios[0].texto.split("\n");
 
   return (
     <Card destaque className="overflow-hidden">
       <div className="grid gap-6 p-5 md:p-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
         <div className="flex flex-col gap-5">
           <div>
-            <p className="text-[13px] font-semibold text-brand">Seu kit pronto</p>
+            <p className="text-[13px] font-semibold text-brand">O kit da {empresa}</p>
             <h2 className="mt-1 font-display text-2xl font-extrabold leading-tight tracking-tight text-balance md:text-[28px]">
-              Tudo pronto para subir seu Score Digital, feito para a sua empresa
+              {ultrapassa ? `Com o kit aplicado, você pode ficar à frente de ${ultrapassa.nome}` : "Tudo pronto para subir seu Score Digital"}
             </h2>
           </div>
 
@@ -43,6 +51,19 @@ export function Offer({ nota, potencial, itens }: Props) {
             </div>
           </div>
 
+          <div className="rounded-[var(--radius-control)] border border-line p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Prévia · sua nova bio</p>
+            <p className="mt-2 text-[15px] font-medium">{linha1}</p>
+            <div className="select-none blur-[5px]" aria-hidden>
+              {resto.map((l) => (
+                <p key={l} className="text-[15px]">
+                  {l}
+                </p>
+              ))}
+            </div>
+            <p className="mt-2 text-[13px] text-muted">+ 2 outras versões, prontas para copiar</p>
+          </div>
+
           <ul className="flex flex-col divide-y divide-line border-y border-line">
             {itens.map((i) => (
               <li key={i.nome} className="flex items-start gap-3 py-2.5 text-[15px]">
@@ -63,6 +84,7 @@ export function Offer({ nota, potencial, itens }: Props) {
 
         <div className="flex flex-col justify-center gap-4 lg:border-l lg:border-line lg:pl-10">
           <div>
+            <p className="mb-2 inline-flex rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-ink">Preço de lançamento</p>
             <p className="text-sm text-muted">
               De <s>R$ 197</s> por
             </p>
