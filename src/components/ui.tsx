@@ -23,12 +23,12 @@ const statusInfo: Record<Status, { texto: string; classe: string }> = {
   frente: { texto: "À frente", classe: "bg-good-soft text-good" },
 };
 
-export function StatusBadge({ status }: { status: Status }) {
+export function StatusBadge({ status, texto }: { status: Status; texto?: string }) {
   const s = statusInfo[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${s.classe}`}>
+    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${s.classe}`}>
       <span className="size-1.5 rounded-full bg-current" aria-hidden />
-      {s.texto}
+      {texto ?? s.texto}
     </span>
   );
 }

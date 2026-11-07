@@ -4,8 +4,8 @@ import "@fontsource-variable/figtree";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Elev8 Radar",
-  description: "Veja como seu cliente encontra, entende e escolhe sua empresa — comparado aos seus concorrentes.",
+  title: "Elev8 Score",
+  description: "Descubra o Score Digital da sua empresa: a nota de 0 a 100 que mostra se o cliente te encontra, entende e escolhe.",
 };
 
 export const viewport: Viewport = {

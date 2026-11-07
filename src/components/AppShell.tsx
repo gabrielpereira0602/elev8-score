@@ -28,10 +28,10 @@ export function AppShell({ ativa, pago, empresa, cidade, children }: Props) {
     <div className="min-h-dvh pb-[calc(76px+env(safe-area-inset-bottom))] md:pb-0">
       <header className="bg-night text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 pt-[max(14px,env(safe-area-inset-top))] md:px-8">
-          <Link href={`/painel${sufixo}`} className="flex items-center gap-2.5" aria-label="Elev8 Radar, início">
+          <Link href={`/painel${sufixo}`} className="flex items-center gap-2.5" aria-label="Elev8 Score, início">
             <Image src="/elev8-symbol.png" alt="" width={20} height={29} priority />
             <span className="font-display text-[17px] font-extrabold tracking-tight">
-              Elev8 <span className="font-medium text-white/60">Radar</span>
+              Elev8 <span className="font-medium text-white/60">Score</span>
             </span>
           </Link>
           <div className="min-w-0 text-right">

@@ -1,7 +1,8 @@
+import { Package } from "lucide-react";
 import type { Etapa } from "@/lib/mock";
 import { Card, StatusBadge } from "./ui";
 
-export function StageCard({ etapa }: { etapa: Etapa }) {
+export function StageCard({ etapa, mostrarSolucao = false }: { etapa: Etapa; mostrarSolucao?: boolean }) {
   return (
     <Card className="flex flex-col gap-3 p-5">
       <div className="flex items-start justify-between gap-3">
@@ -14,7 +15,7 @@ export function StageCard({ etapa }: { etapa: Etapa }) {
 
       <p className="font-display leading-none">
         <span className="tabular text-[40px] font-extrabold tracking-tight">{etapa.nota}</span>
-        <span className="ml-1 text-sm font-semibold text-faint">/100</span>
+        <span className="ml-1 text-sm font-semibold text-faint">de 100</span>
       </p>
 
       <div>
@@ -30,6 +31,15 @@ export function StageCard({ etapa }: { etapa: Etapa }) {
           </span>
         </div>
       </div>
+
+      {mostrarSolucao && (
+        <p className="mt-1 flex items-center gap-2 border-t border-line pt-3 text-[13px] text-muted">
+          <Package size={15} className="shrink-0 text-brand" aria-hidden />
+          <span>
+            O kit resolve com: <b className="font-semibold text-ink">{etapa.solucaoKit}</b>
+          </span>
+        </p>
+      )}
     </Card>
   );
 }

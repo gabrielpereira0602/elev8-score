@@ -2,12 +2,21 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { ScoreCard } from "@/components/ScoreCard";
 import { NextAction } from "@/components/NextAction";
+import { IACheck } from "@/components/IACheck";
+import { GiftAction } from "@/components/GiftAction";
 import { StageCard } from "@/components/StageCard";
-import { KitPreview, PlanProgress } from "@/components/BottomStrip";
+import { Offer } from "@/components/Offer";
+import { PlanProgress } from "@/components/BottomStrip";
 import { diagnostico as d, kitItens } from "@/lib/mock";
 
 type Props = { searchParams: Promise<{ plano?: string }> };
 
+/*
+  Ordem da versão grátis (valor antes do preço):
+  1. o problema (Score Digital contra concorrentes)  2. o que só o Elev8 Score mostra (teste das IAs)
+  3. um presente real (primeira peça do kit)  4. onde perde pontos e o que resolve  5. só então, a oferta.
+  Versão paga: como estou, o que faço agora, onde perco, estou avançando.
+*/
 export default async function VisaoGeral({ searchParams }: Props) {
   const pago = (await searchParams).plano === "pago";
 
@@ -17,7 +26,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">
-              {pago ? "Como você está hoje" : "Seu diagnóstico está pronto"}
+              {pago ? "Como você está hoje" : "Seu Score Digital está pronto"}
             </h1>
             <p className="mt-1 text-sm text-muted">Análise de {d.dataAnalise} · comparação com os 3 concorrentes mais próximos</p>
           </div>
@@ -28,16 +37,22 @@ export default async function VisaoGeral({ searchParams }: Props) {
           <div className="lg:col-span-7">
             <ScoreCard nota={d.nota} ranking={d.ranking} busca={d.busca} data={d.dataAnalise} />
           </div>
-          <div className="lg:col-span-5 [&>section]:h-full">
-            <NextAction pago={pago} acao={d.proximaAcao} />
+          <div className="lg:col-span-5">
+            {pago ? (
+              <NextAction acao={d.proximaAcao} />
+            ) : (
+              <IACheck pergunta={d.ia.pergunta} respostas={d.ia.respostas} data={d.dataAnalise} />
+            )}
           </div>
         </div>
+
+        {!pago && <GiftAction titulo={d.presente.titulo} motivo={d.presente.motivo} mensagem={d.presente.mensagem} />}
 
         <div>
           <h2 className="mb-3 mt-2 font-display text-lg font-bold">Onde você perde pontos</h2>
           <div className="grid gap-4 md:grid-cols-3 md:gap-5">
             {d.etapas.map((e) => (
-              <StageCard key={e.chave} etapa={e} />
+              <StageCard key={e.chave} etapa={e} mostrarSolucao={!pago} />
             ))}
           </div>
         </div>
@@ -45,7 +60,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
         {pago ? (
           <PlanProgress feitas={d.plano.feitas} total={d.plano.total} dias={d.plano.diasParaReavaliacao} />
         ) : (
-          <KitPreview itens={kitItens} />
+          <Offer nota={d.nota} potencial={d.potencialComKit} itens={kitItens} />
         )}
       </div>
     </AppShell>
