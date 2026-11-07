@@ -94,7 +94,7 @@ export const diagnostico: Diagnostico = {
       lider: 80,
       status: "atras",
       resumo: "23 avaliações (líder: 187)",
-      solucaoKit: "Kit de avaliações com plaquinha QR",
+      solucaoKit: "Kit de avaliações com QR code",
     },
   ],
   ia: {
@@ -112,14 +112,14 @@ export const diagnostico: Diagnostico = {
   },
   proximaAcao: {
     titulo: "Peça 10 avaliações esta semana",
-    motivo: "É o que mais pesa no seu Score Digital. A mensagem e a plaquinha com QR code já estão prontas.",
+    motivo: "É o que mais pesa no seu Score Digital. A mensagem e o QR code de avaliação, com a arte para imprimir, já estão prontos.",
     botao: "Abrir mensagem pronta",
   },
   plano: { feitas: 2, total: 12, diasParaReavaliacao: 23 },
 };
 
 export const kitItens = [
-  { nome: "Kit de avaliações", detalhe: "mensagens prontas e plaquinha com QR code para o balcão" },
+  { nome: "Kit de avaliações", detalhe: "mensagens prontas e QR code de avaliação com arte em PDF para você imprimir" },
   { nome: "WhatsApp que vende", detalhe: "do primeiro “oi” ao pós-venda" },
   { nome: "Perfil reescrito", detalhe: "3 versões de bio e como ele vai ficar" },
   { nome: "Google Perfil otimizado", detalhe: "descrição e tudo o que falta preencher" },

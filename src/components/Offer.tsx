@@ -55,6 +55,10 @@ export function Offer({ nota, potencial, itens }: Props) {
               </li>
             ))}
           </ul>
+          <p className="-mt-2 text-[13px] text-muted">
+            Tudo é entregue em formato digital, no seu painel. O QR code vem com a arte pronta para você imprimir; não enviamos
+            materiais físicos.
+          </p>
         </div>
 
         <div className="flex flex-col justify-center gap-4 lg:border-l lg:border-line lg:pl-10">
