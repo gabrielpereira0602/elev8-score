@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Loader2 } from "lucide-react";
 import type { Negocio } from "@/lib/busca-mock";
+import type { SegmentoId } from "@/lib/segmentos";
 
 const etapas = [
   "Encontrando sua empresa no Google Maps",
@@ -21,7 +22,7 @@ const pontos = [
   { x: 186, y: 170, voce: true },
 ];
 
-export function Analisando({ negocio }: { negocio: Negocio }) {
+export function Analisando({ negocio, segmento }: { negocio: Negocio; segmento: SegmentoId }) {
   const router = useRouter();
   const [feitas, setFeitas] = useState(0);
 
@@ -33,9 +34,9 @@ export function Analisando({ negocio }: { negocio: Negocio }) {
 
   useEffect(() => {
     if (feitas < etapas.length) return;
-    const t = window.setTimeout(() => router.push("/painel"), 700);
+    const t = window.setTimeout(() => router.push(segmento === "estetica" ? "/painel" : `/painel?nicho=${segmento}`), 700);
     return () => window.clearTimeout(t);
-  }, [feitas, router]);
+  }, [feitas, router, segmento]);
 
   const pontosVisiveis = Math.min(pontos.length, feitas + 1);
 

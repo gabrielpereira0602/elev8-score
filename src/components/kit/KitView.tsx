@@ -3,27 +3,14 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Camera, Check, CheckCircle2, Circle, Clock, Download, ImageIcon, Lightbulb, Printer, ShieldAlert, Sparkles } from "lucide-react";
-import {
-  bios,
-  biosAtual,
-  googleDescricao,
-  googleFaltando,
-  linkAvaliacao,
-  mensagensAvaliacao,
-  mensagensWhatsapp,
-  empresasDemo,
-  pecas,
-  respostasAvaliacao,
-  type Peca,
-} from "@/lib/kit-mock";
+import type { EmpresaDemo, Kit, Peca } from "@/lib/contexto";
+import type { Segmento } from "@/lib/segmentos";
 import { CopyButton } from "../CopyButton";
 import { Card } from "../ui";
 import { Plaquinha } from "./Plaquinha";
 import { PostArt } from "./PostArt";
 import { gerarPosts } from "@/lib/posts";
-import { segmentos } from "@/lib/segmentos";
 
-const corEmpresa = "#B5476B"; // escolhida pelo empresário no formulário (protótipo)
 
 /** O serviço da Elev8 que resolve cada peça. Aparece no momento em que o empresário vê o trabalho que dá. */
 const servicoElev8: Record<Peca["id"], string> = {
@@ -34,7 +21,8 @@ const servicoElev8: Record<Peca["id"], string> = {
   posts: "a gestão das suas redes sociais",
 };
 
-export function KitView({ empresa }: { empresa: string }) {
+export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string }) {
+  const pecas = kit.pecas;
   const [ativa, setAtiva] = useState<Peca["id"]>("avaliacoes");
   const [feitas, setFeitas] = useState<Set<Peca["id"]>>(new Set());
   const peca = pecas.find((p) => p.id === ativa)!;
@@ -54,7 +42,7 @@ export function KitView({ empresa }: { empresa: string }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Seu kit pronto</h1>
-          <p className="mt-1 text-sm text-muted">5 peças feitas para a {empresa}, a partir do seu diagnóstico.</p>
+          <p className="mt-1 text-sm text-muted">5 peças feitas para {empresa.nome}, a partir do seu diagnóstico.</p>
         </div>
         <p className="text-sm text-muted">
           <b className="tabular font-semibold text-ink">{feitas.size} de {pecas.length}</b> peças aplicadas
@@ -116,11 +104,11 @@ export function KitView({ empresa }: { empresa: string }) {
               </p>
             </div>
 
-            {ativa === "avaliacoes" && <ConteudoAvaliacoes empresa={empresa} />}
-            {ativa === "whatsapp" && <ConteudoWhatsapp />}
-            {ativa === "perfil" && <ConteudoPerfil />}
-            {ativa === "google" && <ConteudoGoogle />}
-            {ativa === "posts" && <ConteudoPosts />}
+            {ativa === "avaliacoes" && <ConteudoAvaliacoes empresa={empresa} kit={kit} />}
+            {ativa === "whatsapp" && <ConteudoWhatsapp kit={kit} />}
+            {ativa === "perfil" && <ConteudoPerfil kit={kit} />}
+            {ativa === "google" && <ConteudoGoogle kit={kit} />}
+            {ativa === "posts" && <ConteudoPosts empresa={empresa} segmento={segmento} />}
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
               <p className="text-sm text-muted">{feita ? "Ótimo. Isso já conta na sua reavaliação." : "Aplicou? Marque para acompanhar seu plano."}</p>
@@ -141,7 +129,7 @@ export function KitView({ empresa }: { empresa: string }) {
             <p className="text-sm text-muted">
               <b className="font-semibold text-ink">Prefere não fazer sozinho?</b> A Elev8 aplica isso para você e cuida de {servicoElev8[ativa]}.
             </p>
-            <Link href="/painel/elev8?plano=pago" className="shrink-0 text-sm font-semibold text-brand hover:underline">
+            <Link href={`/painel/elev8${qs}`} className="shrink-0 text-sm font-semibold text-brand hover:underline">
               Quero que a Elev8 faça
             </Link>
           </div>
@@ -170,7 +158,7 @@ function Subtitulo({ children }: { children: React.ReactNode }) {
   return <h3 className="font-display text-base font-bold">{children}</h3>;
 }
 
-function ConteudoAvaliacoes({ empresa }: { empresa: string }) {
+function ConteudoAvaliacoes({ empresa, kit }: { empresa: EmpresaDemo; kit: Kit }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
@@ -189,19 +177,19 @@ function ConteudoAvaliacoes({ empresa }: { empresa: string }) {
               <Download size={16} aria-hidden />
               Baixar arte para imprimir
             </button>
-            <CopyButton texto={linkAvaliacao} rotulo="Copiar link de avaliação" className="py-2.5" />
+            <CopyButton texto={kit.linkAvaliacao} rotulo="Copiar link de avaliação" className="py-2.5" />
           </div>
           <p className="flex items-center gap-1.5 text-xs text-faint">
             <Printer size={13} aria-hidden />
             Dica: papel fotográfico ou couché deixa o QR mais nítido.
           </p>
         </div>
-        <Plaquinha empresa={empresa} link={linkAvaliacao} cor={corEmpresa} />
+        <Plaquinha empresa={empresa.nome} link={kit.linkAvaliacao} cor={empresa.cor} />
       </div>
 
       <div className="flex flex-col gap-3">
         <Subtitulo>2. Mensagens para pedir avaliação</Subtitulo>
-        {mensagensAvaliacao.map((m) => (
+        {kit.mensagensAvaliacao.map((m) => (
           <Bloco key={m.titulo} titulo={m.titulo} texto={m.texto} />
         ))}
       </div>
@@ -209,7 +197,7 @@ function ConteudoAvaliacoes({ empresa }: { empresa: string }) {
       <div className="flex flex-col gap-3">
         <Subtitulo>3. Como responder as avaliações</Subtitulo>
         <p className="text-sm text-muted">Responder todas, boas e ruins, mostra cuidado para quem está escolhendo.</p>
-        {respostasAvaliacao.map((m) => (
+        {kit.respostasAvaliacao.map((m) => (
           <Bloco key={m.titulo} titulo={m.titulo} texto={m.texto} />
         ))}
       </div>
@@ -217,42 +205,42 @@ function ConteudoAvaliacoes({ empresa }: { empresa: string }) {
   );
 }
 
-function ConteudoWhatsapp() {
+function ConteudoWhatsapp({ kit }: { kit: Kit }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-muted">
         Salve como respostas rápidas no WhatsApp Business: Configurações → Ferramentas comerciais → Respostas rápidas.
       </p>
-      {mensagensWhatsapp.map((m) => (
-        <Bloco key={m.titulo} titulo={m.titulo} sub={m.quando} texto={m.texto} />
+      {kit.mensagensWhatsapp.map((m) => (
+        <Bloco key={m.titulo} titulo={m.titulo} sub={m.sub} texto={m.texto} />
       ))}
     </div>
   );
 }
 
-function ConteudoPerfil() {
+function ConteudoPerfil({ kit }: { kit: Kit }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-[var(--radius-control)] border border-dashed border-line px-4 py-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-faint">Sua bio hoje</p>
-        <p className="mt-1 text-[15px] text-muted">{biosAtual}</p>
+        <p className="mt-1 text-[15px] text-muted">{kit.bioAtual}</p>
       </div>
-      <p className="text-sm text-muted">Escolha a versão com mais a cara da sua clínica e troque no Instagram.</p>
-      {bios.map((b) => (
+      <p className="text-sm text-muted">Escolha a versão com mais a sua cara e troque no Instagram.</p>
+      {kit.bios.map((b) => (
         <Bloco key={b.titulo} titulo={`Versão ${b.titulo.toLowerCase()}`} texto={b.texto} mono />
       ))}
     </div>
   );
 }
 
-function ConteudoGoogle() {
+function ConteudoGoogle({ kit }: { kit: Kit }) {
   return (
     <div className="flex flex-col gap-5">
-      <Bloco titulo="Descrição da empresa" sub="Cole em: Google Perfil → Editar perfil → Descrição" texto={googleDescricao} />
+      <Bloco titulo="Descrição da empresa" sub="Cole em: Google Perfil → Editar perfil → Descrição" texto={kit.googleDescricao} />
       <div className="flex flex-col gap-3">
         <Subtitulo>O que falta preencher</Subtitulo>
         <ul className="flex flex-col divide-y divide-line rounded-[var(--radius-control)] border border-line">
-          {googleFaltando.map((g) => (
+          {kit.googleFaltando.map((g) => (
             <li key={g.item} className="flex gap-3 px-4 py-3">
               <Circle size={18} className="mt-0.5 shrink-0 text-faint" aria-hidden />
               <span>
@@ -267,59 +255,33 @@ function ConteudoGoogle() {
   );
 }
 
-const coresTeste = ["#B5476B", "#0E8A8A", "#1F2A44", "#C0392B", "#F2C230", "#5B4BDB"];
+const coresTeste = ["#B5476B", "#0E8A8A", "#1F2A44", "#C0392B", "#F2C230", "#2E8B57", "#5B4BDB"];
 
-function ConteudoPosts() {
-  const [indice, setIndice] = useState(0);
-  const [cor, setCor] = useState(empresasDemo[0].cor);
+function ConteudoPosts({ empresa: base, segmento: seg }: { empresa: EmpresaDemo; segmento: Segmento }) {
+  const [cor, setCor] = useState(base.cor);
   const [semana, setSemana] = useState(1);
   const [promptAberto, setPromptAberto] = useState<string | null>(null);
 
-  const empresa = { ...empresasDemo[indice], cor };
-  const seg = segmentos[empresa.segmento];
-  const todos = useMemo(() => gerarPosts(empresa), [empresa.nome, empresa.cor]); // eslint-disable-line react-hooks/exhaustive-deps
+  const empresa = { ...base, cor };
+  const todos = useMemo(() => gerarPosts(empresa), [base.nome, cor]); // eslint-disable-line react-hooks/exhaustive-deps
   const lista = todos.filter((p) => p.semana === semana);
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 rounded-[var(--radius-control)] border border-dashed border-warn/50 bg-warn-soft/40 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-warn">Protótipo · teste a adaptação</p>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <label className="flex w-full min-w-0 flex-col gap-1.5 text-sm font-medium sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-            Nicho
-            <select
-              id="teste-nicho"
-              value={indice}
-              onChange={(e) => {
-                const i = Number(e.target.value);
-                setIndice(i);
-                setCor(empresasDemo[i].cor);
-              }}
-              className="w-full min-w-0 max-w-full rounded-[8px] border border-line bg-surface px-2.5 py-1.5 text-sm sm:w-auto"
-            >
-              {empresasDemo.map((d, i) => (
-                <option key={d.nome} value={i}>
-                  {segmentos[d.segmento].nome} · {d.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
-            Cor da marca
-            <div className="flex gap-1.5">
-              {coresTeste.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setCor(c)}
-                  aria-label={`Usar a cor ${c}`}
-                  aria-pressed={c === cor}
-                  className={`size-6 rounded-full ring-offset-2 transition ${c === cor ? "ring-2 ring-ink" : ""}`}
-                  style={{ background: c }}
-                />
-              ))}
-            </div>
-          </div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[var(--radius-control)] border border-dashed border-warn/50 bg-warn-soft/40 px-4 py-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-warn">Protótipo · teste outra cor da marca</p>
+        <div className="flex flex-wrap gap-1.5">
+          {coresTeste.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCor(c)}
+              aria-label={`Usar a cor ${c}`}
+              aria-pressed={c === cor}
+              className={`size-6 rounded-full ring-offset-2 transition ${c === cor ? "ring-2 ring-ink" : ""}`}
+              style={{ background: c }}
+            />
+          ))}
         </div>
       </div>
 

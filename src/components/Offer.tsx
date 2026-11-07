@@ -1,6 +1,5 @@
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { faixaScore, type Concorrente } from "@/lib/mock";
-import { bios } from "@/lib/kit-mock";
 import { Card, Origem } from "./ui";
 
 type Props = {
@@ -9,24 +8,26 @@ type Props = {
   potencial: number;
   ranking: Concorrente[];
   itens: { nome: string; detalhe: string }[];
+  bioPrevia: string;
+  hrefLiberar: string;
 };
 
 /** Versão grátis: a oferta só aparece depois do valor (problema, exclusivo, presente, etapas). */
-export function Offer({ empresa, nota, potencial, ranking, itens }: Props) {
+export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hrefLiberar }: Props) {
   const faixaHoje = faixaScore(nota).texto;
   const faixaDepois = faixaScore(potencial).texto;
   // Meta próxima e com nome: o concorrente de maior nota que o potencial estimado ultrapassa.
   const ultrapassa = ranking
     .filter((r) => !r.voce && r.nota > nota && r.nota < potencial)
     .sort((a, b) => b.nota - a.nota)[0];
-  const [linha1, ...resto] = bios[0].texto.split("\n");
+  const [linha1, ...resto] = bioPrevia.split("\n");
 
   return (
     <Card destaque className="overflow-hidden">
       <div className="grid gap-6 p-5 md:p-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
         <div className="flex flex-col gap-5">
           <div>
-            <p className="text-[13px] font-semibold text-brand">O kit da {empresa}</p>
+            <p className="text-[13px] font-semibold text-brand">Kit feito para {empresa}</p>
             <h2 className="mt-1 font-display text-2xl font-extrabold leading-tight tracking-tight text-balance md:text-[28px]">
               {ultrapassa ? `Com o kit aplicado, você pode ficar à frente de ${ultrapassa.nome}` : "Tudo pronto para subir seu Score Digital"}
             </h2>
@@ -92,7 +93,7 @@ export function Offer({ empresa, nota, potencial, ranking, itens }: Props) {
             <p className="mt-2 text-sm text-muted">Pagamento único no Pix ou cartão. Sem mensalidade.</p>
           </div>
           <a
-            href="?plano=pago"
+            href={hrefLiberar}
             className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] bg-brand px-5 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Liberar meu kit

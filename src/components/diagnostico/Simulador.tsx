@@ -7,7 +7,7 @@ import { aplicarKit, calcularScore, type Lider, type Metricas } from "@/lib/scor
 import { faixaScore, type Concorrente } from "@/lib/mock";
 import { Card, Origem, StatusBadge } from "../ui";
 
-type Props = { hoje: Metricas; lider: Lider; ranking: Concorrente[]; pago: boolean };
+type Props = { hoje: Metricas; lider: Lider; ranking: Concorrente[]; pago: boolean; qs: string; qsLiberar: string };
 
 type Controle = {
   chave: keyof Metricas;
@@ -31,7 +31,8 @@ const doSite: Controle[] = [
   { chave: "siteClaro", rotulo: "Clareza do site", min: 0, max: 100, passo: 10, sufixo: "/100" },
 ];
 
-export function Simulador({ hoje, lider, ranking, pago }: Props) {
+export function Simulador({ hoje, lider, ranking, pago, qs, qsLiberar }: Props) {
+  void qsLiberar; // reservado: botão de compra direta quando o checkout existir
   const [m, setM] = useState<Metricas>(hoje);
   const base = useMemo(() => calcularScore(hoje, lider), [hoje, lider]);
   const sim = calcularScore(m, lider);
@@ -161,7 +162,7 @@ export function Simulador({ hoje, lider, ranking, pago }: Props) {
 
             {mexeuNoSite ? (
               <Link
-                href={`/painel/elev8${pago ? "?plano=pago" : ""}`}
+                href={`/painel/elev8${qs}`}
                 className="flex items-center justify-between gap-3 rounded-[var(--radius-control)] bg-night px-4 py-3 text-sm text-white"
               >
                 <span>
@@ -171,7 +172,7 @@ export function Simulador({ hoje, lider, ranking, pago }: Props) {
               </Link>
             ) : (
               <Link
-                href={pago ? "/painel/kit?plano=pago" : "/painel#oferta"}
+                href={pago ? `/painel/kit${qs}` : `/painel${qs}#oferta`}
                 className="flex items-center justify-between gap-3 rounded-[var(--radius-control)] bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover"
               >
                 {pago ? "Abrir meu kit" : "Liberar meu kit por R$ 97"}

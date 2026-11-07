@@ -2,8 +2,6 @@ import { Card, Origem } from "../ui";
 
 type Linha = { rotulo: string; valores: [string, string, string, string]; pior?: boolean; origem: string };
 
-// Ordem das colunas: você, depois os concorrentes do 1º ao 3º.
-const colunas = ["Você", "Estética Lumière", "Clínica Aurora", "Espaço Vitta"];
 
 const linhas: Linha[] = [
   { rotulo: "Posição no Google Maps", valores: ["4º", "1º", "2º", "3º"], pior: true, origem: "Maps" },
@@ -16,7 +14,9 @@ const linhas: Linha[] = [
   { rotulo: "Bio explica o que faz", valores: ["Não", "Sim", "Sim", "Não"], origem: "Informado" },
 ];
 
-export function Comparativo({ data }: { data: string }) {
+export function Comparativo({ data, concorrentes }: { data: string; concorrentes: [string, string, string] }) {
+  // Ordem das colunas: você, depois os concorrentes do 1º ao 3º.
+  const colunas = ["Você", ...concorrentes];
   return (
     <Card className="p-5 md:p-7">
       <h2 className="font-display text-xl font-bold tracking-tight">Lado a lado</h2>

@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Building2, Check, MapPin, RefreshCw, Search, Star } from "lucide-react";
 import { buscarNegocios, concorrentesSugeridos, type Negocio } from "@/lib/busca-mock";
+import { contexto } from "@/lib/contexto";
 import { detectarSegmento, listaSegmentos, segmentos, type SegmentoId } from "@/lib/segmentos";
 import { Analisando } from "./Analisando";
 
@@ -14,6 +15,7 @@ const botaoPrimario =
 export function Entrada() {
   const [passo, setPasso] = useState<Passo>("busca");
   const [negocio, setNegocio] = useState<Negocio | null>(null);
+  const [segmento, setSegmento] = useState<SegmentoId>("generico");
   const caixaRef = useRef<HTMLDivElement>(null);
   const primeiraVez = useRef(true);
 
@@ -34,7 +36,7 @@ export function Entrada() {
   if (passo === "analisando" && negocio)
     return (
       <div ref={caixaRef} className="scroll-mt-4">
-        <Analisando negocio={negocio} />
+        <Analisando negocio={negocio} segmento={segmento} />
       </div>
     );
 
@@ -53,12 +55,13 @@ export function Entrada() {
         <PassoBusca
           onEscolher={(n) => {
             setNegocio(n);
+            setSegmento(detectarSegmento(n.categoria));
             setPasso("confirmar");
           }}
         />
       )}
       {passo === "confirmar" && negocio && (
-        <PassoConfirmar negocio={negocio} onVoltar={() => setPasso("busca")} onSeguir={() => setPasso("contato")} />
+        <PassoConfirmar negocio={negocio} segmento={segmento} setSegmento={setSegmento} onVoltar={() => setPasso("busca")} onSeguir={() => setPasso("contato")} />
       )}
       {passo === "contato" && <PassoContato onVoltar={() => setPasso("confirmar")} onSeguir={() => setPasso("analisando")} />}
     </div>
@@ -164,9 +167,18 @@ function PassoBusca({ onEscolher }: { onEscolher: (n: Negocio) => void }) {
   );
 }
 
-function PassoConfirmar({ negocio, onVoltar, onSeguir }: { negocio: Negocio; onVoltar: () => void; onSeguir: () => void }) {
-  // Detecção pela categoria do Google, sempre confirmável. Sem correspondência, cai no perfil genérico.
-  const [segmento, setSegmento] = useState<SegmentoId>(() => detectarSegmento(negocio.categoria));
+type ConfirmarProps = {
+  negocio: Negocio;
+  segmento: SegmentoId;
+  setSegmento: (s: SegmentoId) => void;
+  onVoltar: () => void;
+  onSeguir: () => void;
+};
+
+function PassoConfirmar({ negocio, segmento, setSegmento, onVoltar, onSeguir }: ConfirmarProps) {
+  // Detecção pela categoria do Google (feita ao escolher a empresa), sempre confirmável. Sem correspondência, perfil genérico.
+  // Protótipo: concorrentes de exemplo do nicho. Na fase 2, vêm da mesma busca no Google Maps.
+  const concorrentesNicho = contexto(segmento).empresa.concorrentes.map((nome, i) => ({ ...concorrentesSugeridos[i], nome }));
   const termoBusca = `${segmentos[segmento].nome.toLowerCase()} em ${negocio.endereco.split("·").pop()?.trim().split(",")[0] ?? "sua cidade"}`;
 
   return (
@@ -213,7 +225,7 @@ function PassoConfirmar({ negocio, onVoltar, onSeguir }: { negocio: Negocio; onV
           Vamos comparar com quem aparece em <span className="text-ink">“{termoBusca}”</span>
         </p>
         <ul className="flex flex-col divide-y divide-line rounded-[var(--radius-control)] border border-line">
-          {concorrentesSugeridos.map((c) => (
+          {concorrentesNicho.map((c) => (
             <li key={c.nome} className="flex items-center justify-between gap-3 px-4 py-3">
               <span className="min-w-0">
                 <span className="block truncate text-[15px] font-medium">{c.nome}</span>

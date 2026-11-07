@@ -25,6 +25,8 @@ export type Segmento = {
   chaves: string[];
   cliente: string; // clientes, pacientes, alunos, tutores
   acao: string; // verbo da conversão principal
+  atender: string; // como agradecer o atendimento: "te atender", "receber você"
+  perguntaInicial: string; // pergunta da primeira resposta no WhatsApp
   /** Temas que viram posts. Escritos uma vez por nicho e completados com os dados da empresa. */
   temas: {
     dor: string; // post de identificação com o problema
@@ -49,6 +51,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["estetica", "esteticista", "spa", "depilacao", "beauty clinic"],
     cliente: "clientes",
     acao: "agendar uma avaliação",
+    atender: "te atender",
+    perguntaInicial: "qual tratamento você está procurando? Assim já te passo valores e horários.",
     temas: {
       dor: "3 sinais de que sua pele precisa de uma limpeza profunda",
       comparacao: "Peeling ou limpeza de pele: qual escolher?",
@@ -68,6 +72,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["dentista", "odonto", "ortodont", "implante dentario"],
     cliente: "pacientes",
     acao: "marcar uma consulta",
+    atender: "te atender",
+    perguntaInicial: "o que você está precisando? Assim te explico como funciona a primeira consulta.",
     temas: {
       dor: "3 sinais de que está na hora de voltar ao dentista",
       comparacao: "Clareamento a laser ou caseiro: qual a diferença?",
@@ -90,6 +96,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["advoga", "advocacia", "advogado", "juridic"],
     cliente: "clientes",
     acao: "agendar uma conversa",
+    atender: "te atender",
+    perguntaInicial: "qual é a sua situação, em poucas palavras? Assim te explico como funciona o primeiro atendimento.",
     temas: {
       dor: "3 situações em que vale procurar um advogado trabalhista",
       comparacao: "Acordo ou processo: o que considerar antes de decidir",
@@ -112,6 +120,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["restaurante", "pizzaria", "lanchonete", "hamburgueria", "cafe", "cafeteria", "padaria", "bar", "churrascaria", "sorveteria"],
     cliente: "clientes",
     acao: "reservar ou pedir",
+    atender: "receber você",
+    perguntaInicial: "é para hoje ou para outro dia? Me diz quantas pessoas que eu já te ajudo.",
     temas: {
       dor: "3 motivos para fugir do almoço sem graça esta semana",
       comparacao: "Massa fresca ou seca: qual a diferença no prato?",
@@ -131,6 +141,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["academia", "pilates", "crossfit", "studio", "yoga", "funcional", "personal"],
     cliente: "alunos",
     acao: "fazer uma aula experimental",
+    atender: "ter você na aula",
+    perguntaInicial: "qual é o seu objetivo? Assim te indico a melhor turma para a aula experimental.",
     temas: {
       dor: "3 sinais de que seu treino precisa mudar",
       comparacao: "Musculação ou funcional: qual combina com você?",
@@ -150,6 +162,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["pet", "veterin", "banho e tosa", "animal"],
     cliente: "tutores",
     acao: "agendar um horário",
+    atender: "cuidar do seu pet",
+    perguntaInicial: "qual o porte do seu pet e o que ele precisa? Assim te passo valores e horários.",
     temas: {
       dor: "3 sinais de que seu pet precisa de um banho profissional",
       comparacao: "Tosa higiênica ou completa: qual pedir?",
@@ -169,6 +183,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["salao", "cabeleire", "barbearia", "barbeiro", "manicure", "unha", "maquiagem"],
     cliente: "clientes",
     acao: "agendar um horário",
+    atender: "te atender",
+    perguntaInicial: "qual serviço você quer fazer? Assim já te passo os horários livres.",
     temas: {
       dor: "3 sinais de que seu cabelo precisa de um corte",
       comparacao: "Hidratação ou reconstrução: qual seu cabelo pede?",
@@ -188,6 +204,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: ["loja", "boutique", "comercio", "store", "moda", "otica", "papelaria"],
     cliente: "clientes",
     acao: "visitar a loja ou pedir pelo WhatsApp",
+    atender: "te atender",
+    perguntaInicial: "qual produto você está procurando? Te mando fotos e o preço por aqui mesmo.",
     temas: {
       dor: "3 sinais de que você está comprando no lugar errado",
       comparacao: "Como escolher entre os nossos dois mais vendidos",
@@ -207,6 +225,8 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     chaves: [],
     cliente: "clientes",
     acao: "entrar em contato",
+    atender: "te atender",
+    perguntaInicial: "me conta o que você está precisando? Assim te explico como funciona.",
     temas: {
       dor: "3 sinais de que você precisa de ajuda profissional nisso",
       comparacao: "Como escolher o serviço certo para o seu caso",

@@ -1,5 +1,7 @@
 import { aplicarKit, calcularScore } from "../src/lib/score";
-import { diagnostico, liderBusca, metricasHoje } from "../src/lib/mock";
+import { liderBusca, metricasHoje } from "../src/lib/mock";
+import { contexto } from "../src/lib/contexto";
+const diagnostico = contexto("estetica").diagnostico;
 
 let falhas = 0;
 const confere = (nome: string, ok: boolean, detalhe = "") => {

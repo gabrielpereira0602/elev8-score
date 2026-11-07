@@ -43,7 +43,7 @@ export function KitPreview({ itens }: { itens: string[] }) {
   );
 }
 
-export function TabLocked() {
+export function TabLocked({ qs = "" }: { qs?: string }) {
   return (
     <Card className="mx-auto flex max-w-md flex-col items-center gap-3 p-8 text-center">
       <span className="grid size-11 place-items-center rounded-full bg-subtle text-muted">
@@ -51,7 +51,7 @@ export function TabLocked() {
       </span>
       <h2 className="font-display text-lg font-bold">Liberado com o kit</h2>
       <p className="text-sm text-muted">Esta parte do painel abre assim que você liberar seu kit pronto.</p>
-      <Link href="/painel" className="mt-1 text-sm font-semibold text-brand hover:underline">
+      <Link href={`/painel${qs}`} className="mt-1 text-sm font-semibold text-brand hover:underline">
         Voltar para a visão geral
       </Link>
     </Card>

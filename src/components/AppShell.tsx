@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BarraPrototipo } from "./BarraPrototipo";
 import { LayoutGrid, ScanSearch, Package, CalendarCheck, MessageCircle, Handshake, Lock } from "lucide-react";
 
 export type Aba = "visao-geral" | "diagnostico" | "kit" | "plano" | "assistente" | "elev8";
@@ -16,13 +17,23 @@ const abas: { id: Aba; nome: string; curto: string; icone: typeof LayoutGrid; pa
 type Props = {
   ativa: Aba;
   pago: boolean;
+  nicho: string;
   empresa: string;
   cidade: string;
   children: React.ReactNode;
 };
 
-export function AppShell({ ativa, pago, empresa, cidade, children }: Props) {
-  const sufixo = pago ? "?plano=pago" : "";
+/** Monta a query que mantém versão (grátis/paga) e nicho ao navegar entre as abas. */
+export function montarQs(pago: boolean, nicho: string) {
+  const p = new URLSearchParams();
+  if (pago) p.set("plano", "pago");
+  if (nicho && nicho !== "estetica") p.set("nicho", nicho);
+  const q = p.toString();
+  return q ? `?${q}` : "";
+}
+
+export function AppShell({ ativa, pago, nicho, empresa, cidade, children }: Props) {
+  const sufixo = montarQs(pago, nicho);
 
   return (
     <div className="min-h-dvh pb-[calc(76px+env(safe-area-inset-bottom))] md:pb-0">
@@ -66,6 +77,7 @@ export function AppShell({ ativa, pago, empresa, cidade, children }: Props) {
         </nav>
       </header>
 
+      <BarraPrototipo pago={pago} nicho={nicho} />
       <main className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8">{children}</main>
 
       <nav

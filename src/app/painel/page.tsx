@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { AppShell } from "@/components/AppShell";
+import { AppShell, montarQs } from "@/components/AppShell";
 import { ScoreCard } from "@/components/ScoreCard";
 import { NextAction } from "@/components/NextAction";
 import { IACheck } from "@/components/IACheck";
@@ -8,9 +7,10 @@ import { StageCard } from "@/components/StageCard";
 import { Offer } from "@/components/Offer";
 import { PlanProgress } from "@/components/BottomStrip";
 import { StickyCTA } from "@/components/StickyCTA";
-import { diagnostico as d, kitItens } from "@/lib/mock";
+import { kitItens } from "@/lib/mock";
+import { contexto } from "@/lib/contexto";
 
-type Props = { searchParams: Promise<{ plano?: string }> };
+type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
 
 /*
   Ordem da versão grátis (valor antes do preço):
@@ -19,19 +19,20 @@ type Props = { searchParams: Promise<{ plano?: string }> };
   Versão paga: como estou, o que faço agora, onde perco, estou avançando.
 */
 export default async function VisaoGeral({ searchParams }: Props) {
-  const pago = (await searchParams).plano === "pago";
+  const sp = await searchParams;
+  const pago = sp.plano === "pago";
+  const ctx = contexto(sp.nicho);
+  const d = ctx.diagnostico;
+  const nicho = ctx.empresa.segmento;
 
   return (
-    <AppShell ativa="visao-geral" pago={pago} empresa={d.empresa} cidade={d.cidade}>
+    <AppShell ativa="visao-geral" pago={pago} nicho={nicho} empresa={d.empresa} cidade={d.cidade}>
       <div className="flex flex-col gap-4 md:gap-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">
-              {pago ? "Como você está hoje" : "Seu Score Digital está pronto"}
-            </h1>
-            <p className="mt-1 text-sm text-muted">Análise de {d.dataAnalise} · comparação com os 3 concorrentes mais próximos</p>
-          </div>
-          <VerComo pago={pago} />
+        <div>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">
+            {pago ? "Como você está hoje" : "Seu Score Digital está pronto"}
+          </h1>
+          <p className="mt-1 text-sm text-muted">Análise de {d.dataAnalise} · comparação com os 3 concorrentes mais próximos</p>
         </div>
 
         <div className="grid gap-4 md:gap-5 lg:grid-cols-12">
@@ -39,11 +40,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
             <ScoreCard nota={d.nota} ranking={d.ranking} busca={d.busca} data={d.dataAnalise} />
           </div>
           <div className="lg:col-span-5">
-            {pago ? (
-              <NextAction acao={d.proximaAcao} />
-            ) : (
-              <IACheck pergunta={d.ia.pergunta} respostas={d.ia.respostas} data={d.dataAnalise} />
-            )}
+            {pago ? <NextAction acao={d.proximaAcao} /> : <IACheck pergunta={d.ia.pergunta} respostas={d.ia.respostas} data={d.dataAnalise} />}
           </div>
         </div>
 
@@ -62,28 +59,19 @@ export default async function VisaoGeral({ searchParams }: Props) {
           <PlanProgress feitas={d.plano.feitas} total={d.plano.total} dias={d.plano.diasParaReavaliacao} />
         ) : (
           <div id="oferta" className="scroll-mt-4">
-            <Offer empresa={d.empresa} nota={d.nota} potencial={d.potencialComKit} ranking={d.ranking} itens={kitItens} />
+            <Offer
+              empresa={d.empresa}
+              nota={d.nota}
+              potencial={d.potencialComKit}
+              ranking={d.ranking}
+              itens={kitItens}
+              bioPrevia={ctx.kit.bios[0].texto}
+              hrefLiberar={montarQs(true, nicho)}
+            />
           </div>
         )}
       </div>
       {!pago && <StickyCTA />}
     </AppShell>
-  );
-}
-
-function VerComo({ pago }: { pago: boolean }) {
-  const base = "rounded-[8px] px-3 py-1.5 text-[13px] font-semibold transition-colors";
-  return (
-    <div className="flex items-center gap-2" aria-label="Alternar visualização do protótipo">
-      <span className="text-xs font-medium uppercase tracking-wide text-faint">Protótipo</span>
-      <div className="flex rounded-[10px] border border-line bg-surface p-1">
-        <Link href="/painel" className={`${base} ${!pago ? "bg-ink text-white" : "text-muted hover:text-ink"}`}>
-          Grátis
-        </Link>
-        <Link href="/painel?plano=pago" className={`${base} ${pago ? "bg-ink text-white" : "text-muted hover:text-ink"}`}>
-          Pago
-        </Link>
-      </div>
-    </div>
   );
 }

@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { ArrowRight, Clock, Lock } from "lucide-react";
-import { pecas } from "@/lib/kit-mock";
+import type { Peca } from "@/lib/contexto";
 import { Card } from "../ui";
 
 /** Versão grátis da aba Kit: mostra o que vem, o porquê de cada peça e o conteúdo desfocado. */
-export function KitLocked({ empresa }: { empresa: string }) {
+export function KitLocked({ empresa, pecas, qs }: { empresa: string; pecas: Peca[]; qs: string }) {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">O kit da {empresa} está pronto</h1>
-          <p className="mt-1 text-sm text-muted">5 peças feitas a partir do seu diagnóstico. Libere para ver e usar.</p>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Seu kit está pronto</h1>
+          <p className="mt-1 text-sm text-muted">5 peças feitas para {empresa}, a partir do seu diagnóstico. Libere para ver e usar.</p>
         </div>
         <Link
-          href="/painel#oferta"
+          href={`/painel${qs}#oferta`}
           className="inline-flex items-center gap-2 rounded-[var(--radius-control)] bg-brand px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-brand-hover"
         >
           Liberar por R$ 97
