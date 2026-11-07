@@ -33,10 +33,10 @@ export function StickyCTA() {
         className="flex items-center justify-between gap-3 rounded-[14px] bg-night px-4 py-3 text-white shadow-[0_10px_30px_-8px_rgba(5,7,13,0.5)]"
       >
         <span>
-          <span className="block text-[12px] text-white/60">Kit pronto · preço de lançamento</span>
+          <span className="block whitespace-nowrap text-[12px] text-white/60">Preço de lançamento</span>
           <span className="font-display text-lg font-extrabold">R$ 97</span>
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-[10px] bg-brand px-4 py-2.5 text-sm font-semibold">
+        <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-brand px-4 py-2.5 text-sm font-semibold">
           Liberar meu kit
           <ArrowRight size={16} aria-hidden />
         </span>
