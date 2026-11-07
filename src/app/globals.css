@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+/*
+  ELEV8 Radar — tokens de design
+  Leitura em primeiro lugar: fundo claro e frio, um único azul (o do logo) para ação e destaque,
+  cores de status sempre acompanhadas de palavra. Topo escuro carrega a marca.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page: #f4f6fa;
+  --surface: #ffffff;
+  --subtle: #eef1f6;
+  --line: #e2e6ee;
+  --ink: #0b0f19;
+  --muted: #5b6478;
+  --faint: #8a93a8;
+
+  --brand: #0066ff;
+  --brand-hover: #0057d9;
+  --brand-soft: #e8f0ff;
+  --brand-ink: #0047b3;
+  --night: #05070d;
+
+  --bad: #c62f2f;
+  --bad-soft: #fdecec;
+  --warn: #a35f00;
+  --warn-soft: #fff2d9;
+  --good: #15784a;
+  --good-soft: #e3f5eb;
+
+  --rival: #a9b1c2;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-night: var(--night);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-rival: var(--rival);
+
+  --font-sans: "Figtree Variable", system-ui, sans-serif;
+  --font-display: "Montserrat Variable", system-ui, sans-serif;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--page);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
