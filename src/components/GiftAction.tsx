@@ -7,15 +7,18 @@ import { Card } from "./ui";
 /** Versão grátis: a primeira peça do kit, liberada de presente. Prova a qualidade antes do preço. */
 export function GiftAction({ titulo, motivo, mensagem }: { titulo: string; motivo: string; mensagem: string }) {
   const [copiado, setCopiado] = useState(false);
+  const [jaCopiou, setJaCopiou] = useState(false);
   const textoRef = useRef<HTMLParagraphElement>(null);
 
   async function copiar() {
     try {
       await navigator.clipboard.writeText(mensagem);
       setCopiado(true);
+      setJaCopiou(true);
       window.setTimeout(() => setCopiado(false), 2200);
     } catch {
       // Sem acesso à área de transferência: seleciona o texto para o usuário copiar.
+      setJaCopiou(true);
       const el = textoRef.current;
       if (!el) return;
       const r = document.createRange();
@@ -51,6 +54,14 @@ export function GiftAction({ titulo, motivo, mensagem }: { titulo: string; motiv
           {copiado ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
           {copiado ? "Mensagem copiada" : "Copiar mensagem"}
         </button>
+        {jaCopiou && (
+          <p className="text-sm text-muted" role="status">
+            Gostou? O kit tem mais 4 peças como essa, feitas para a sua empresa.{" "}
+            <a href="#oferta" className="font-semibold text-brand hover:underline">
+              Ver o que vem no kit
+            </a>
+          </p>
+        )}
       </div>
     </Card>
   );

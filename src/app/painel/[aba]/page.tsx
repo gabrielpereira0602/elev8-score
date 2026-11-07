@@ -4,7 +4,9 @@ import { TabLocked } from "@/components/BottomStrip";
 import { KitView } from "@/components/kit/KitView";
 import { KitLocked } from "@/components/kit/KitLocked";
 import { Card } from "@/components/ui";
-import { diagnostico as d } from "@/lib/mock";
+import { diagnostico as d, liderBusca, metricasHoje } from "@/lib/mock";
+import { Simulador } from "@/components/diagnostico/Simulador";
+import { Comparativo } from "@/components/diagnostico/Comparativo";
 
 const validas: Aba[] = ["diagnostico", "kit", "plano", "assistente", "elev8"];
 const pagas: Aba[] = ["kit", "plano", "assistente"];
@@ -18,7 +20,20 @@ export default async function AbaPage({ params, searchParams }: Props) {
   const bloqueada = pagas.includes(aba as Aba) && !pago;
 
   let conteudo: React.ReactNode;
-  if (aba === "kit") conteudo = pago ? <KitView empresa={d.empresa} /> : <KitLocked empresa={d.empresa} />;
+  if (aba === "diagnostico")
+    conteudo = (
+      <div className="flex flex-col gap-5">
+        <div>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Diagnóstico completo</h1>
+          <p className="mt-1 text-sm text-muted">
+            Seu Score Digital hoje é <b className="font-semibold text-ink">{d.nota}</b>. Simule o que muda e veja todos os números que entram na conta.
+          </p>
+        </div>
+        <Simulador hoje={metricasHoje} lider={liderBusca} ranking={d.ranking} pago={pago} />
+        <Comparativo data={d.dataAnalise} />
+      </div>
+    );
+  else if (aba === "kit") conteudo = pago ? <KitView empresa={d.empresa} /> : <KitLocked empresa={d.empresa} />;
   else if (bloqueada) conteudo = <TabLocked />;
   else
     conteudo = (

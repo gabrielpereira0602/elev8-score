@@ -1,4 +1,5 @@
 // Dados simulados da fase 1. Na fase 2 este arquivo é substituído por dados reais do Supabase.
+import { aplicarKit, calcularScore, type Lider, type Metricas } from "./score";
 
 export type Status = "atras" | "media" | "frente";
 
@@ -42,14 +43,39 @@ export type Diagnostico = {
 export function faixaScore(n: number): { texto: string; tom: Status } {
   if (n < 40) return { texto: "Difícil de ser escolhido", tom: "atras" };
   if (n < 70) return { texto: "Na disputa", tom: "media" };
-  return { texto: "Primeira escolha", tom: "frente" };
+  return { texto: "Bem posicionado", tom: "frente" };
 }
 
 export const pesos = [
-  { etapa: "Encontrado", peso: 40, mede: "Posição no Google Maps, perfil completo, velocidade do site" },
-  { etapa: "Entendido", peso: 30, mede: "Descrição, categorias, bio e clareza do que você oferece" },
-  { etapa: "Escolhido", peso: 30, mede: "Estrelas, número de avaliações, fotos e respostas" },
+  { etapa: "Encontrado", peso: 40, mede: "Avaliações, perfil do Google completo e velocidade do site" },
+  { etapa: "Entendido", peso: 30, mede: "Bio clara, perfil completo, frequência de posts e clareza do site" },
+  { etapa: "Escolhido", peso: 30, mede: "Avaliações, fotos, estrelas e respostas às avaliações" },
 ];
+
+/** Dados observados da empresa hoje (na fase 2: Google Places, PageSpeed e formulário). */
+export const metricasHoje: Metricas = {
+  avaliacoes: 23,
+  fotos: 12,
+  perfilPreenchido: 60,
+  velocidadeSite: 41,
+  bioClara: false,
+  postsPorSemana: 1,
+  respostasAvaliacoes: 30,
+  estrelas: 4.6,
+  siteClaro: 30,
+};
+
+/** Números do 1º colocado da mesma busca, usados como referência. */
+export const liderBusca: Lider = { avaliacoes: 187, fotos: 96 };
+
+const hoje = calcularScore(metricasHoje, liderBusca);
+const comKit = calcularScore(aplicarKit(metricasHoje), liderBusca);
+
+function statusEtapa(nota: number, lider: number): Status {
+  if (nota >= lider) return "frente";
+  if (nota >= lider - 15) return "media";
+  return "atras";
+}
 
 export const diagnostico: Diagnostico = {
   empresa: "Clínica Bella Pele",
@@ -57,22 +83,22 @@ export const diagnostico: Diagnostico = {
   segmento: "Clínica de estética",
   busca: "clínica de estética em Vinhedo",
   dataAnalise: "07/11/2026",
-  nota: 38,
-  potencialComKit: 61,
+  nota: hoje.total,
+  potencialComKit: comKit.total,
   ranking: [
     { nome: "Estética Lumière", nota: 86 },
     { nome: "Clínica Aurora", nota: 74 },
     { nome: "Espaço Vitta", nota: 57 },
-    { nome: "Você", nota: 38, voce: true },
+    { nome: "Você", nota: hoje.total, voce: true },
   ],
   etapas: [
     {
       chave: "encontrado",
       nome: "Encontrado",
       pergunta: "Você aparece quando procuram?",
-      nota: 25,
+      nota: hoje.encontrado,
       lider: 92,
-      status: "atras",
+      status: statusEtapa(hoje.encontrado, 92),
       resumo: "4º no Google Maps",
       solucaoKit: "Google Perfil otimizado",
     },
@@ -80,19 +106,19 @@ export const diagnostico: Diagnostico = {
       chave: "entendido",
       nome: "Entendido",
       pergunta: "Seu perfil explica o que você faz?",
-      nota: 52,
+      nota: hoje.entendido,
       lider: 84,
-      status: "media",
-      resumo: "Perfil 60% preenchido",
+      status: statusEtapa(hoje.entendido, 84),
+      resumo: "Bio sem tratamentos nem como agendar",
       solucaoKit: "Perfil reescrito e 12 posts",
     },
     {
       chave: "escolhido",
       nome: "Escolhido",
       pergunta: "Há motivos para confiar em você?",
-      nota: 41,
+      nota: hoje.escolhido,
       lider: 80,
-      status: "atras",
+      status: statusEtapa(hoje.escolhido, 80),
       resumo: "23 avaliações (líder: 187)",
       solucaoKit: "Kit de avaliações com QR code",
     },

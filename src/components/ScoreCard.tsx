@@ -95,7 +95,7 @@ export function ScoreCard({ nota, ranking, busca, data }: Props) {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted">0 a 39: difícil de ser escolhido · 40 a 69: na disputa · 70 a 100: primeira escolha</p>
+          <p className="mt-3 text-xs text-muted">0 a 39: difícil de ser escolhido · 40 a 69: na disputa · 70 a 100: bem posicionado</p>
         </div>
       )}
 
