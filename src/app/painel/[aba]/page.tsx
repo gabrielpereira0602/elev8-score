@@ -11,7 +11,8 @@ import { Card } from "@/components/ui";
 import { liderBusca, metricasHoje } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
 import { recomendar } from "@/lib/recomendacoes";
-import { descontoAtivo } from "@/lib/elev8";
+import { descontoAtivo, formatarData } from "@/lib/elev8";
+import { Assistente } from "@/components/assistente/Assistente";
 
 const validas: Aba[] = ["diagnostico", "kit", "plano", "assistente", "elev8"];
 const pagas: Aba[] = ["kit", "plano", "assistente"];
@@ -62,6 +63,12 @@ export default async function AbaPage({ params, searchParams }: Props) {
       />
     );
   }
+  else if (aba === "assistente")
+    conteudo = pago ? (
+      <Assistente ctx={ctx} qs={qs} ativoAte={formatarData(new Date(new Date(d.dataISO).getTime() + 30 * 864e5))} />
+    ) : (
+      <TabLocked qs={qs} />
+    );
   else if (bloqueada) conteudo = <TabLocked qs={qs} />;
   else
     conteudo = (

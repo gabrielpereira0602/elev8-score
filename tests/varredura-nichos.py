@@ -39,7 +39,7 @@ with sync_playwright() as p:
         for n in nichos:
             for pago in (False,True):
                 q=f'?nicho={n}'+('&plano=pago' if pago else '')
-                for aba in ['', '/diagnostico','/kit','/plano','/elev8']:
+                for aba in ['', '/diagnostico','/kit','/plano','/elev8','/assistente']:
                     pg.goto(f'http://localhost:3100/painel{aba}{q}'); pg.wait_for_timeout(150)
                     rot=f'{largura}px {"pago" if pago else "grátis"} {aba or "/visao-geral"}'
                     checar(pg,n,rot); telas+=1

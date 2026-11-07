@@ -55,7 +55,7 @@ export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; 
         </p>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
         <nav aria-label="Peças do kit" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
           <ul className="flex gap-2 lg:flex-col">
             {pecas.map((p) => {
@@ -167,7 +167,7 @@ function Subtitulo({ children }: { children: React.ReactNode }) {
 function ConteudoAvaliacoes({ empresa, kit }: { empresa: EmpresaDemo; kit: Kit }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
         <div className="flex flex-col gap-3">
           <Subtitulo>1. A plaquinha para o balcão</Subtitulo>
           <p className="text-[15px] leading-relaxed text-muted">
