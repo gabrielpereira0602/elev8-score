@@ -5,7 +5,8 @@ import type { Concorrente } from "@/lib/mock";
 import { Card, Origem, Rotulo } from "./ui";
 
 function useContagem(alvo: number, duracao = 900) {
-  const [valor, setValor] = useState(0);
+  // Começa no valor real: sem JavaScript, ou se a animação falhar, a nota certa continua na tela.
+  const [valor, setValor] = useState(alvo);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setValor(alvo);
