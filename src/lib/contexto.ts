@@ -65,7 +65,8 @@ function statusEtapa(nota: number, lider: number): Status {
 }
 
 /** Nunca falha: nicho desconhecido ou ausente cai na clínica de estética de exemplo. */
-export function contexto(nicho?: string): Contexto {
+export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Contexto {
+  // Protótipo: o diagnóstico é "de hoje". Na fase 2, a data vem do banco.
   const e = empresasDemo.find((x) => x.segmento === nicho) ?? empresasDemo[0];
   const s = segmentos[e.segmento as SegmentoId];
   const hoje = calcularScore(metricasHoje, liderBusca);
@@ -79,7 +80,8 @@ export function contexto(nicho?: string): Contexto {
     cidade: `${e.cidade}, ${e.uf}`,
     segmento: s.nome,
     busca,
-    dataAnalise: "07/11/2026",
+    dataAnalise: dataDiagnostico.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+    dataISO: dataDiagnostico.toISOString(),
     nota: hoje.total,
     potencialComKit: comKit.total,
     ranking: [

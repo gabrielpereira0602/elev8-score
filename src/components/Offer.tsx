@@ -107,6 +107,9 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
             </span>
           </p>
           <p className="text-sm text-muted">Em 30 dias refazemos a análise e mostramos o antes e depois.</p>
+          <p className="rounded-[var(--radius-control)] bg-brand-soft px-3.5 py-2.5 text-sm text-brand-ink">
+            <b className="font-semibold">Bônus:</b> 10% de desconto em qualquer serviço da Elev8, se um dia você quiser que a gente faça por você.
+          </p>
         </div>
       </div>
     </Card>

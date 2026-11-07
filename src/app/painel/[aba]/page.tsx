@@ -11,6 +11,7 @@ import { Card } from "@/components/ui";
 import { liderBusca, metricasHoje } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
 import { recomendar } from "@/lib/recomendacoes";
+import { descontoAtivo } from "@/lib/elev8";
 
 const validas: Aba[] = ["diagnostico", "kit", "plano", "assistente", "elev8"];
 const pagas: Aba[] = ["kit", "plano", "assistente"];
@@ -38,7 +39,7 @@ export default async function AbaPage({ params, searchParams }: Props) {
             Seu Score Digital hoje é <b className="font-semibold text-ink">{d.nota}</b>. Simule o que muda e veja todos os números que entram na conta.
           </p>
         </div>
-        <Simulador hoje={metricasHoje} lider={liderBusca} ranking={d.ranking} pago={pago} qs={qs} qsLiberar={montarQs(true, nicho)} />
+        <Simulador hoje={metricasHoje} lider={liderBusca} ranking={d.ranking} pago={pago} qs={qs} />
         <Comparativo data={d.dataAnalise} concorrentes={ctx.empresa.concorrentes} />
       </div>
     );
@@ -50,7 +51,17 @@ export default async function AbaPage({ params, searchParams }: Props) {
     );
   else if (aba === "plano") conteudo = pago ? <Plano segmento={ctx.segmento} qs={qs} diasParaReavaliacao={d.plano.diasParaReavaliacao} /> : <TabLocked qs={qs} />;
   else if (aba === "elev8")
-    conteudo = <ComElev8 empresa={d.empresa} recomendacoes={recomendar(metricasHoje, liderBusca, ctx.empresa, ctx.segmento)} pago={pago} />;
+  {
+    const desc = descontoAtivo(new Date(d.dataISO), pago);
+    conteudo = (
+      <ComElev8
+        empresa={d.empresa}
+        recomendacoes={recomendar(metricasHoje, liderBusca, ctx.empresa, ctx.segmento)}
+        pago={pago}
+        desconto={desc ? { percentual: desc.percentual, motivo: desc.motivo } : null}
+      />
+    );
+  }
   else if (bloqueada) conteudo = <TabLocked qs={qs} />;
   else
     conteudo = (

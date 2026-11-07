@@ -162,7 +162,7 @@ function PassoBusca({ onEscolher }: { onEscolher: (n: Negocio) => void }) {
         Continuar
         <ArrowRight size={18} aria-hidden />
       </button>
-      <p className="text-center text-[13px] text-faint">Para testar o protótipo, digite “Bella”.</p>
+      <p className="text-center text-[13px] text-faint">Para testar, digite o começo de um nome: “Bella”, “Moura”, “Cantina”, “Studio”…</p>
     </form>
   );
 }
@@ -178,6 +178,7 @@ type ConfirmarProps = {
 function PassoConfirmar({ negocio, segmento, setSegmento, onVoltar, onSeguir }: ConfirmarProps) {
   // Detecção pela categoria do Google (feita ao escolher a empresa), sempre confirmável. Sem correspondência, perfil genérico.
   // Protótipo: concorrentes de exemplo do nicho. Na fase 2, vêm da mesma busca no Google Maps.
+  const [aviso, setAviso] = useState(false);
   const concorrentesNicho = contexto(segmento).empresa.concorrentes.map((nome, i) => ({ ...concorrentesSugeridos[i], nome }));
   const termoBusca = `${segmentos[segmento].nome.toLowerCase()} em ${negocio.endereco.split("·").pop()?.trim().split(",")[0] ?? "sua cidade"}`;
 
@@ -234,7 +235,11 @@ function PassoConfirmar({ negocio, segmento, setSegmento, onVoltar, onSeguir }: 
                   {c.nota.toLocaleString("pt-BR")} · {c.avaliacoes} avaliações · {c.endereco}
                 </span>
               </span>
-              <button type="button" className="inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold text-brand hover:underline">
+              <button
+                type="button"
+                onClick={() => setAviso(true)}
+                className="inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
+              >
                 <RefreshCw size={13} aria-hidden />
                 Trocar
               </button>
@@ -242,6 +247,12 @@ function PassoConfirmar({ negocio, segmento, setSegmento, onVoltar, onSeguir }: 
           ))}
         </ul>
       </div>
+
+      {aviso && (
+        <p role="status" className="-mt-2 rounded-[var(--radius-control)] bg-subtle px-3.5 py-2.5 text-[13px] text-muted">
+          Protótipo: na versão final, aqui abre a lista dos outros negócios da mesma busca no Google para você escolher.
+        </p>
+      )}
 
       <button type="button" onClick={onSeguir} className={botaoPrimario}>
         Está certo, continuar

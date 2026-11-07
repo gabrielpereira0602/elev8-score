@@ -26,7 +26,7 @@ def checar(pg, nicho, rotulo):
     for bug in ['undefined','NaN','[object','null']:
         if re.search(r'\b'+re.escape(bug)+r'\b', t): erros.append(f'[{nicho}] {rotulo}: "{bug}"')
     if nicho in ('advocacia','odontologia'):
-        precos=[p for p in re.findall(r'R\$ ?\d[\d.]*\d|R\$ ?\d', t) if p.replace(' ','') not in ('R$97','R$197')]
+        precos=[p for p in re.findall(r'R\$ ?\d[\d.]*\d|R\$ ?\d', t) if p.replace(' ','').replace('\xa0','') not in ('R$97','R$197','R$597','R$797','R$997','R$1.097','R$1.497','R$2.100')]
         if '/elev8' in rotulo: precos=[]  # faixas de orçamento da proposta da Elev8, não preço do cliente
         if precos: erros.append(f'[{nicho}] {rotulo}: preço em setor que não permite -> {precos[:3]}')
     w=pg.evaluate('document.documentElement.scrollWidth')

@@ -29,6 +29,7 @@ export type Diagnostico = {
   segmento: string;
   busca: string;
   dataAnalise: string;
+  dataISO: string; // data do diagnóstico, base da janela de 7 dias do desconto
   nota: number;
   potencialComKit: number;
   ranking: Concorrente[];

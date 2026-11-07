@@ -7,7 +7,7 @@ import { aplicarKit, calcularScore, type Lider, type Metricas } from "@/lib/scor
 import { faixaScore, type Concorrente } from "@/lib/mock";
 import { Card, Origem, StatusBadge } from "../ui";
 
-type Props = { hoje: Metricas; lider: Lider; ranking: Concorrente[]; pago: boolean; qs: string; qsLiberar: string };
+type Props = { hoje: Metricas; lider: Lider; ranking: Concorrente[]; pago: boolean; qs: string };
 
 type Controle = {
   chave: keyof Metricas;
@@ -31,8 +31,7 @@ const doSite: Controle[] = [
   { chave: "siteClaro", rotulo: "Clareza do site", min: 0, max: 100, passo: 10, sufixo: "/100" },
 ];
 
-export function Simulador({ hoje, lider, ranking, pago, qs, qsLiberar }: Props) {
-  void qsLiberar; // reservado: botão de compra direta quando o checkout existir
+export function Simulador({ hoje, lider, ranking, pago, qs }: Props) {
   const [m, setM] = useState<Metricas>(hoje);
   const base = useMemo(() => calcularScore(hoje, lider), [hoje, lider]);
   const sim = calcularScore(m, lider);

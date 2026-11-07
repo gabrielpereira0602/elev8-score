@@ -10,16 +10,22 @@ import { Card } from "../ui";
 import { Plaquinha } from "./Plaquinha";
 import { PostArt } from "./PostArt";
 import { gerarPosts } from "@/lib/posts";
+import { formatarBRL, servico } from "@/lib/elev8";
 
 
 /** O serviço da Elev8 que resolve cada peça. Aparece no momento em que o empresário vê o trabalho que dá. */
-const servicoElev8: Record<Peca["id"], string> = {
-  avaliacoes: "o seu Google Perfil e as avaliações (SEO local)",
-  whatsapp: "anúncios que trazem mais conversas para o seu WhatsApp",
-  perfil: "a sua identidade visual e as redes sociais",
-  google: "o seu Google Perfil (SEO local)",
-  posts: "a gestão das suas redes sociais",
+const servicoElev8: Record<Peca["id"], { texto: string; servicoId: string }> = {
+  avaliacoes: { texto: "o seu Google Perfil e as avaliações", servicoId: "seo-local" },
+  whatsapp: { texto: "anúncios que trazem mais conversas para o seu WhatsApp", servicoId: "meta-essencial" },
+  perfil: { texto: "a sua identidade visual e as redes sociais", servicoId: "branding" },
+  google: { texto: "o seu Google Perfil", servicoId: "seo-local" },
+  posts: { texto: "a gestão das suas redes sociais", servicoId: "redes" },
 };
+
+function precoAPartir(id: string) {
+  const s = servico(id);
+  return s.preco === undefined ? "orçamento sob consulta" : `a partir de ${formatarBRL(s.preco)}${s.cobranca === "mensal" ? "/mês" : ""}`;
+}
 
 export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string }) {
   const pecas = kit.pecas;
@@ -127,7 +133,7 @@ export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; 
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-control)] bg-subtle px-4 py-3.5">
             <p className="text-sm text-muted">
-              <b className="font-semibold text-ink">Prefere não fazer sozinho?</b> A Elev8 aplica isso para você e cuida de {servicoElev8[ativa]}.
+              <b className="font-semibold text-ink">Prefere não fazer sozinho?</b> A Elev8 aplica isso para você e cuida de {servicoElev8[ativa].texto} ({precoAPartir(servicoElev8[ativa].servicoId)}). Por ter comprado o kit, você tem desconto.
             </p>
             <Link href={`/painel/elev8${qs}`} className="shrink-0 text-sm font-semibold text-brand hover:underline">
               Quero que a Elev8 faça
