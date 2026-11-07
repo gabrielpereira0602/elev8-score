@@ -4,6 +4,7 @@
   e indicar a Elev8 quando o pedido é trabalho de profissional.
 */
 import type { Contexto } from "./contexto";
+import { liderBusca, metricasHoje } from "./mock";
 
 export type Resposta = { texto: string; linkElev8?: boolean; linkKit?: boolean };
 
@@ -48,13 +49,13 @@ export function responder(pergunta: string, ctx: Contexto): Resposta {
 
   if (/(score|nota).*(sobe|subir|aument|melhor)|(quanto).*(sobe|subir)/.test(p)) {
     return {
-      texto: `Hoje seu Score Digital é ${d.nota}. Aplicando o kit inteiro, a estimativa é chegar a ${d.potencialComKit}, pela fórmula do Score. O que mais pesa: avaliações (você tem 23, o 1º colocado tem 187), perfil do Google completo e bio clara.\n\nIsso é uma estimativa, não uma promessa. A reavaliação no dia 30 mostra o número real.`,
+      texto: `Hoje seu Score Digital é ${d.nota}. Aplicando o kit inteiro, a estimativa é chegar a ${d.potencialComKit}, pela fórmula do Score. O que mais pesa: avaliações (você tem ${metricasHoje.avaliacoes}, o 1º colocado tem ${liderBusca.avaliacoes}), perfil do Google completo e bio clara.\n\nIsso é uma estimativa, não uma promessa. A reavaliação no dia 30 mostra o número real.`,
     };
   }
 
   if (/(site|landing|pagina|anuncio|trafego|google ads|meta ads|instagram ads|loja virtual)/.test(p)) {
     return {
-      texto: `Pelo seu diagnóstico, sim: seu site tem nota 41/100 de velocidade no celular e não deixa claro como ${s.acao}. É a parte do Score que o kit não resolve.\n\nIsso já é trabalho de profissional. Na aba Com a Elev8 você vê as opções com preço e o desconto que vale para você.`,
+      texto: `Pelo seu diagnóstico, sim: seu site tem nota ${metricasHoje.velocidadeSite}/100 de velocidade no celular e não deixa claro como ${s.acao}. É a parte do Score que o kit não resolve.\n\nIsso já é trabalho de profissional. Na aba Com a Elev8 você vê as opções com preço e o desconto que vale para você.`,
       linkElev8: true,
     };
   }
