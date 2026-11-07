@@ -13,14 +13,24 @@ function useContagem(alvo: number, duracao = 900) {
       return;
     }
     let raf = 0;
-    const inicio = performance.now();
+    let inicio: number | null = null;
     const passo = (t: number) => {
-      const p = Math.min(1, (t - inicio) / duracao);
+      if (inicio === null) inicio = t;
+      const p = Math.min(1, Math.max(0, (t - inicio) / duracao));
       setValor(Math.round(alvo * (1 - Math.pow(1 - p, 3))));
       if (p < 1) raf = requestAnimationFrame(passo);
     };
+    setValor(0);
     raf = requestAnimationFrame(passo);
-    return () => cancelAnimationFrame(raf);
+    // Garantia: se o navegador pausar a animação (aba em segundo plano, economia de bateria), mostra o valor final.
+    const seguro = window.setTimeout(() => {
+      cancelAnimationFrame(raf);
+      setValor(alvo);
+    }, duracao + 400);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(seguro);
+    };
   }, [alvo, duracao]);
   return valor;
 }
