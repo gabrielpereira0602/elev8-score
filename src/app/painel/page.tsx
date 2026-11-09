@@ -54,7 +54,11 @@ export default async function VisaoGeral({ searchParams }: Props) {
           />
         )}
 
-        {!pago && <GiftAction titulo={d.presente.titulo} motivo={d.presente.motivo} mensagem={d.presente.mensagem} />}
+        {!pago && (
+          <div id="presente" className="scroll-mt-4">
+            <GiftAction titulo={d.presente.titulo} motivo={d.presente.motivo} mensagem={d.presente.mensagem} />
+          </div>
+        )}
 
         <div>
           <h2 className="mb-3 mt-2 font-display text-lg font-bold">Onde você perde pontos</h2>

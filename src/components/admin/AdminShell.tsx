@@ -2,7 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export type AbaAdmin = "leads" | "prospeccao" | "emails" | "parceiros";
+
+const abasAdmin: { id: AbaAdmin; nome: string; href: string }[] = [
+  { id: "leads", nome: "Leads", href: "/admin" },
+  { id: "prospeccao", nome: "Prospecção", href: "/admin/prospeccao" },
+  { id: "emails", nome: "E-mails", href: "/admin/emails" },
+  { id: "parceiros", nome: "Parceiros", href: "/admin/parceiros" },
+];
+
+export function AdminShell({ children, ativa = "leads" }: { children: React.ReactNode; ativa?: AbaAdmin }) {
   return (
     <div className="min-h-dvh">
       <header className="bg-night text-white">
@@ -19,6 +28,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <ExternalLink size={14} aria-hidden />
           </Link>
         </div>
+        <nav className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-2 md:px-6" aria-label="Seções do admin">
+          {abasAdmin.map((a) => (
+            <Link
+              key={a.id}
+              href={a.href}
+              aria-current={ativa === a.id ? "page" : undefined}
+              className={`relative shrink-0 px-3 py-3 text-sm font-semibold transition-colors ${ativa === a.id ? "text-white" : "text-white/55 hover:text-white"}`}
+            >
+              {a.nome}
+              {ativa === a.id && <span className="absolute inset-x-3 bottom-0 h-[3px] rounded-full bg-brand" aria-hidden />}
+            </Link>
+          ))}
+        </nav>
       </header>
       <div className="border-b border-warn/30 bg-warn-soft/60">
         <p className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 text-[12.5px] text-warn md:px-8">
