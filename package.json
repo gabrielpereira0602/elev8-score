@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx tests/segmentos.test.ts && tsx tests/score.test.ts && tsx tests/elev8.test.ts && tsx tests/assistente.test.ts && tsx tests/emails.test.ts"
+    "test": "tsx tests/segmentos.test.ts && tsx tests/score.test.ts && tsx tests/elev8.test.ts && tsx tests/assistente.test.ts && tsx tests/emails.test.ts && tsx tests/ciclo.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.2.10",

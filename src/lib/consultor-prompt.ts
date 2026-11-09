@@ -1,5 +1,7 @@
 /*
-  Instruções do consultor de marketing (fase 3).
+  Instruções do consultor de marketing para um modo com IA (opcional, futuro).
+  O consultor do produto funciona offline (consultor-base.ts), sem custo por pergunta. Este texto fica pronto
+  para o dia em que valer a pena ligar uma IA como reforço, por exemplo só para perguntas que a base não cobre.
 
   Este texto vai como "system prompt" para a IA em cada conversa do consultor. Ele junta três coisas:
   1. quem o consultor é e como responde (método fixo, igual para todo nicho);

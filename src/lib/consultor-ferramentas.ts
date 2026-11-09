@@ -68,7 +68,7 @@ export function mensagemWhatsapp(ctx: Contexto, o: { nome: string; objetivo: Obj
     indicacao: `Que bom que você gostou, ${nome}! Se você conhece alguém que também precisa, pode passar o nosso contato. A gente atende com o mesmo cuidado.`,
     retomar: `Oi, ${nome}! Aqui é da equipe ${e.nome}. Passando para saber se ficou alguma dúvida. Se quiser ${s.acao}, é só me responder por aqui.`,
     reativar: s.permitePreco
-      ? `Oi, ${nome}! Aqui é da equipe ${e.nome}. Faz um tempo desde ${s.consultor.retorno} e lembrei de você. Esta semana temos horários livres. Quer que eu separe um para você?`
+      ? `Oi, ${nome}! Aqui é da equipe ${e.nome}. Faz um tempo desde ${s.consultor.retorno} e lembrei de você. Se quiser ${s.acao} esta semana, é só me responder por aqui.`
       : `Oi, ${nome}! Aqui é da equipe ${e.nome}. Passando para lembrar que já faz um tempo desde ${s.consultor.retorno}. Se precisar de algo, é só responder aqui.`,
   };
   return textos[o.objetivo];
@@ -122,7 +122,7 @@ export function legenda(ctx: Contexto, o: { temaId: string; tom: "proximo" | "pr
     primeiraVez: `${tema.nome}\n\n${proximo ? "Primeira vez dá um frio na barriga, a gente sabe." : "Muitos " + s.cliente + " chegam com dúvidas sobre o primeiro contato."} Aqui é simples: você conta o que precisa, a gente explica o caminho e você decide com calma.`,
     bastidor: `Um pouco do dia a dia da equipe ${e.nome}.\n\n${proximo ? "Por trás de cada atendimento tem gente que gosta muito do que faz." : "Cada detalhe é pensado para o seu atendimento."} ${e.diferencial}.`,
     data: data
-      ? `${data.nome} está chegando! ${proximo ? "Já se organizou?" : "Vale se planejar com antecedência."}\n\n[Complete em 1 ou 2 frases. Ideia: ${data.ideia}.]${s.permitePreco ? "" : "\n\n(Seu setor: só informação, sem preço e sem promoção.)"}`
+      ? `${data.nome}: ${proximo ? "já se organizou?" : "vale se planejar com antecedência."}\n\n[Complete em 1 ou 2 frases. Ideia: ${data.ideia}.]${s.permitePreco ? "" : "\n\n(Seu setor: só informação, sem preço e sem promoção.)"}`
       : `${tema.nome}`,
   };
   const tags = [hashtag(e.cidade), hashtag(e.buscaTermo), hashtag(`${e.buscaTermo} ${e.cidade}`)].join(" ");

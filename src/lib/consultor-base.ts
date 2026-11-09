@@ -368,7 +368,7 @@ export const TEMAS: Tema[] = [
     gatilhos: ["!mais clientes", "!mais pacientes", "!mais alunos", "!mais tutores", "!mais vendas", "!mais pedidos", "!vender mais", "atrair", "captar", "!clientes novos", "movimento", "fraco"],
     resposta: ({ segmento: s, empresa: e }) => {
       const mensagem = s.permitePreco
-        ? `“Oi, [nome]! Aqui é da equipe ${e.nome}. Faz um tempo desde ${s.consultor.retorno} e lembrei de você. Esta semana temos horários livres. Quer que eu separe um para você?”`
+        ? `“Oi, [nome]! Aqui é da equipe ${e.nome}. Faz um tempo desde ${s.consultor.retorno} e lembrei de você. Se quiser ${s.acao} esta semana, é só me responder por aqui.”`
         : `“Oi, [nome]! Aqui é da equipe ${e.nome}. Passando para lembrar que já faz um tempo desde ${s.consultor.retorno}. Se precisar de algo, é só responder aqui.”`;
       return {
         texto: `O caminho mais rápido não é post novo, é quem já te conhece. Três frentes, nesta ordem:\n\n1. Retome contato com quem não volta há 60 dias ou mais. Mensagem individual, com o nome da pessoa, nunca lista genérica:\n${mensagem}\n\n2. Peça indicação na hora em que o ${umCliente(s)} agradece. É quando ele está mais disposto a indicar.\n\n3. Peça avaliação no Google. É lá que quem procura ${e.buscaTermo} em ${e.cidade} compara você com os concorrentes.\n\nComece pela 1: essas pessoas já confiam em você, então a resposta vem mais rápido.${s.permitePreco ? "" : " No seu setor, o contato é lembrete e informação, sem promoção."}`,

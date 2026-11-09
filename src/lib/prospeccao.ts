@@ -62,15 +62,18 @@ export function prospectos(lista: Lead[] = leads): Prospecto[] {
   for (const l of lista.filter((x) => x.origem !== "prospeccao")) {
     const ctx = contexto(l.segmento);
     ctx.diagnostico.ranking.forEach((r, pos) => {
-      if (r.voce) return;
-      const codigo = slug(r.nome);
+      // A própria empresa do diagnóstico nunca é concorrente dela mesma.
+      // No ranking, a empresa de exemplo do nicho aparece como "Você": aqui ela é concorrente do lead.
+      const nome = r.voce ? ctx.empresa.nome : r.nome;
+      if (slug(nome) === slug(l.empresa)) return;
+      const codigo = slug(nome);
       if (vistos.has(codigo)) return;
       vistos.add(codigo);
       const virou = jaSaoLeads.has(codigo);
       const status: StatusProspecto = virou ? "virou-lead" : STATUS_DEMO[i++ % STATUS_DEMO.length];
       saida.push({
         codigo,
-        nome: r.nome,
+        nome,
         segmento: l.segmento,
         cidade: ctx.empresa.cidade,
         busca: ctx.diagnostico.busca,

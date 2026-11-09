@@ -93,9 +93,9 @@ export function emails(ctx: Contexto, hoje = new Date()): Email[] {
       quando: "3 dias depois",
       dia: 3,
       assunto: `“${s.consultor.pergunta}”`,
-      previa: "Essa é a pergunta que mais ouvimos no seu setor.",
+      previa: "Uma pergunta comum no seu setor, já respondida para você.",
       paragrafos: [
-        `Oi! Essa é uma das perguntas que mais ouvimos de quem tem ${s.nome.toLowerCase()}. O consultor de marketing do kit começa a resposta assim:`,
+        `Oi! Essa é uma pergunta comum de quem tem ${s.nome.toLowerCase()}. O consultor de marketing do kit começa a resposta assim:`,
         `“${previaConsultor}”`,
         `A resposta completa traz o passo a passo e o texto pronto para copiar, feito para ${e.nome}. O consultor vem junto com o kit, sem limite de perguntas, por 12 meses.`,
       ],

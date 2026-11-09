@@ -10,6 +10,7 @@ import { StickyCTA } from "@/components/StickyCTA";
 import { kitItens } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
 import { ConsultorCard } from "@/components/ConsultorCard";
+import { ScoreVivo } from "@/components/ScoreVivo";
 import { acessoAte } from "@/lib/elev8";
 
 type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
@@ -70,7 +71,10 @@ export default async function VisaoGeral({ searchParams }: Props) {
         </div>
 
         {pago ? (
-          <PlanProgress feitas={d.plano.feitas} total={d.plano.total} dias={d.plano.diasParaReavaliacao} />
+          <>
+            <PlanProgress feitas={d.plano.feitas} total={d.plano.total} dias={d.plano.diasParaReavaliacao} />
+            <ScoreVivo concorrente={ctx.empresa.concorrentes[0]} />
+          </>
         ) : (
           <div id="oferta" className="scroll-mt-4">
             <Offer

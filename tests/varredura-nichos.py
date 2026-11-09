@@ -43,6 +43,10 @@ with sync_playwright() as p:
                     pg.goto(f'http://localhost:3100/painel{aba}{q}'); pg.wait_for_timeout(150)
                     rot=f'{largura}px {"pago" if pago else "grátis"} {aba or "/visao-geral"}'
                     checar(pg,n,rot); telas+=1
+                    if aba=='/assistente' and pago:
+                        for modo in ('Biblioteca','Ferramentas'):
+                            pg.get_by_role('tab', name=modo).click(); pg.wait_for_timeout(120)
+                            checar(pg,n,rot+' '+modo); telas+=1
                     if aba=='/kit' and pago:
                         for peca in ['WhatsApp que vende','Perfil reescrito','Google Perfil otimizado','12 posts prontos']:
                             pg.get_by_role('button', name=peca).click(); pg.wait_for_timeout(120)
@@ -50,6 +54,17 @@ with sync_playwright() as p:
                                 for s in (2,3,4):
                                     checar(pg,n,rot+f' posts semana 1-{s}'); pg.get_by_role('tab', name=f'Semana {s}').click(); pg.wait_for_timeout(80)
                             checar(pg,n,rot+' '+peca); telas+=1
+        # Telas gerais: sem checagem de nicho (o admin mostra todos), só erros e largura.
+        gerais=['/','/privacidade','/termos','/descadastro','/?parceiro=contabil-alianca','/?convite=estetica-lumiere','/?convite=dom-barber-nao-existe',
+                '/admin','/admin/prospeccao','/admin/parceiros','/admin/lead/l01','/admin/lead/l05']+[f'/admin/emails?nicho={n}' for n in nichos]
+        for url in gerais:
+            pg.goto(f'http://localhost:3100{url}'); pg.wait_for_timeout(150)
+            t=pg.inner_text('body')
+            for bug in ['undefined','NaN','[object','null']:
+                if re.search(r'\b'+re.escape(bug)+r'\b', t): erros.append(f'{largura}px {url}: "{bug}"')
+            w=pg.evaluate('document.documentElement.scrollWidth')
+            if w>pg.viewport_size['width']: erros.append(f'{largura}px {url}: tela mais larga que o viewport ({w}px)')
+            telas+=1
     b.close()
 print(f'{telas} telas verificadas')
 print('\n'.join(sorted(set(erros))) if erros else 'Nenhum problema encontrado')
