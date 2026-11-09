@@ -70,12 +70,13 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
           <div className="rounded-[var(--radius-control)] bg-night p-4 text-white md:p-5">
             <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/70">
               <Sparkles size={13} aria-hidden />
-              Incluso no kit · 30 dias
+              Incluso no kit · sem limite de perguntas
             </p>
             <h3 className="mt-1 font-display text-lg font-bold">Seu consultor de marketing com IA</h3>
             <p className="mt-1 text-sm leading-relaxed text-white/75">
-              Pergunte qualquer coisa sobre o marketing de {empresa}, a qualquer hora. Ele já conhece seu diagnóstico, seus concorrentes e as regras de{" "}
-              {consultor.setor}, e responde com passo a passo e texto pronto.
+              Pergunte qualquer coisa sobre o marketing de {empresa}, a qualquer hora, durante 12 meses. Ele já conhece seu diagnóstico, seus concorrentes
+              e as regras de {consultor.setor}, responde com passo a passo e texto pronto, e tem ferramentas que escrevem respostas, mensagens e legendas por
+              você.
             </p>
             <div className="mt-3 flex flex-col gap-2">
               <p className="max-w-[90%] self-end rounded-[12px] rounded-br-[4px] bg-brand px-3 py-2 text-[13px]">{consultor.pergunta}</p>

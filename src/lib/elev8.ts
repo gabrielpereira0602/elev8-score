@@ -82,6 +82,14 @@ export const formatarBRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: v % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
 
 export const formatarData = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", timeZone: FUSO });
+export const formatarDataAno = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: FUSO });
+
+/** Fim do acesso ao kit e ao consultor: 12 meses depois da compra. */
+export function acessoAte(dataCompra: Date): string {
+  const d = new Date(dataCompra);
+  d.setUTCMonth(d.getUTCMonth() + PRODUTO.acessoMeses);
+  return formatarDataAno(d);
+}
 
 /** Texto de preço de um serviço, com o desconto aplicado quando houver. */
 export function precoTexto(s: Servico, desconto: DescontoAtivo | null) {

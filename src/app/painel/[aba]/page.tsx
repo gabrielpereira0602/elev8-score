@@ -11,7 +11,7 @@ import { Card } from "@/components/ui";
 import { liderBusca, metricasHoje } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
 import { recomendar } from "@/lib/recomendacoes";
-import { descontoAtivo, formatarData } from "@/lib/elev8";
+import { acessoAte, descontoAtivo } from "@/lib/elev8";
 import { Assistente } from "@/components/assistente/Assistente";
 import { ConsultorLocked } from "@/components/assistente/ConsultorLocked";
 import { sugestoesPara } from "@/lib/assistente";
@@ -70,7 +70,7 @@ export default async function AbaPage({ params, searchParams }: Props) {
       <Assistente
         ctx={ctx}
         qs={qs}
-        ativoAte={formatarData(new Date(new Date(d.dataISO).getTime() + 30 * 864e5))}
+        ativoAte={acessoAte(new Date(new Date(d.dataISO).getTime() - (30 - d.plano.diasParaReavaliacao) * 864e5))}
         sugestoes={sugestoesPara(ctx)}
         perguntaInicial={typeof sp.q === "string" ? sp.q.slice(0, 200) : ""}
       />

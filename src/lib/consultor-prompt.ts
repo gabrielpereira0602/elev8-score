@@ -9,7 +9,7 @@
 */
 import type { Contexto } from "./contexto";
 import { liderBusca, metricasHoje } from "./mock";
-import { maiorPerda, mesSP } from "./assistente";
+import { maiorPerda, mesSP } from "./consultor-util";
 import { REGRA, formatarData } from "./elev8";
 
 export type DadosConsultor = {

@@ -10,7 +10,7 @@ import { StickyCTA } from "@/components/StickyCTA";
 import { kitItens } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
 import { ConsultorCard } from "@/components/ConsultorCard";
-import { formatarData } from "@/lib/elev8";
+import { acessoAte } from "@/lib/elev8";
 
 type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
 
@@ -49,7 +49,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
         {pago && (
           <ConsultorCard
             qs={montarQs(true, nicho)}
-            ativoAte={formatarData(new Date(new Date(d.dataISO).getTime() + 30 * 864e5))}
+            ativoAte={acessoAte(new Date(new Date(d.dataISO).getTime() - (30 - d.plano.diasParaReavaliacao) * 864e5))}
             perguntas={["O que eu faço primeiro esta semana?", ctx.segmento.consultor.pergunta]}
           />
         )}

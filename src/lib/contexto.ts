@@ -151,11 +151,11 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
     ],
     googleDescricao: `${e.nome} é ${e.tipo} em ${e.cidade}, ${e.uf}. ${e.diferencial}. Conheça ${e.servico} e fale com a gente pelo WhatsApp ou pelo telefone. Endereço: ${e.endereco}.`,
     googleFaltando: [
-      { item: "Fotos", detalhe: "Você tem 12; o 1º colocado tem 96. Comece com 10 novas, do espaço e do seu trabalho." },
+      { item: "Fotos", detalhe: `Você tem ${metricasHoje.fotos}; o 1º colocado tem ${liderBusca.fotos}. Comece com 10 novas, do espaço e do seu trabalho.` },
       { item: "Serviços ou produtos", detalhe: s.permitePreco ? "Cadastre os 5 principais, com valor inicial." : "Cadastre as 5 áreas ou serviços principais (sem preço, pelas regras do seu setor)." },
       { item: "Horário completo", detalhe: "Informe também sábado e feriados." },
       { item: "Categorias secundárias", detalhe: "Adicione 2 categorias que descrevem o que mais você faz." },
-      { item: "Responder avaliações", detalhe: "70% das suas avaliações estão sem resposta. Use os modelos do kit." },
+      { item: "Responder avaliações", detalhe: `${100 - metricasHoje.respostasAvaliacoes}% das suas avaliações estão sem resposta. Use os modelos do kit.` },
     ],
   };
 

@@ -85,7 +85,7 @@ export function ConsultorLocked({ ctx, qs }: { ctx: Contexto; qs: string }) {
 
       <p className="flex items-center gap-2 text-sm text-muted">
         <Clock size={15} aria-hidden />
-        30 dias de acesso a partir da compra, até 20 perguntas por dia.
+        Acesso por 12 meses a partir da compra, sem limite de perguntas. Inclui biblioteca com mais de 30 temas e ferramentas que escrevem por você.
       </p>
     </div>
   );

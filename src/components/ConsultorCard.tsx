@@ -13,7 +13,7 @@ export function ConsultorCard({ qs, ativoAte, perguntas }: { qs: string; ativoAt
         </span>
         <div>
           <h2 className="font-display text-base font-bold">Seu consultor de marketing está ativo</h2>
-          <p className="text-[13px] text-muted">Até {ativoAte} · 20 perguntas por dia · respostas com o seu diagnóstico</p>
+          <p className="text-[13px] text-muted">Acesso até {ativoAte} · sem limite de perguntas · biblioteca e ferramentas</p>
         </div>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:justify-end">
