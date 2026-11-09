@@ -13,7 +13,7 @@
     "@fontsource-variable/figtree": "^5.2.10",
     "@fontsource-variable/montserrat": "^5.2.8",
     "lucide-react": "^0.544.0",
-    "next": "15.5.4",
+    "next": "^15.5.29",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -26,9 +26,15 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.4",
+    "eslint-config-next": "^15.5.29",
     "tailwindcss": "^4",
     "tsx": "^4.19.2",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.23"
+  },
+  "engines": {
+    "node": ">=20.9 <25"
   }
 }
