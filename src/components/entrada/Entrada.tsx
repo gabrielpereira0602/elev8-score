@@ -348,7 +348,7 @@ function PassoContato({ onVoltar, onSeguir }: { onVoltar: () => void; onSeguir: 
         </span>
         <span>
           Aceito receber meu resultado e contatos da Elev8 sobre ele por WhatsApp e e-mail. Posso cancelar quando quiser.{" "}
-          <a href="#" className="font-semibold text-brand hover:underline">
+          <a href="/privacidade" target="_blank" className="font-semibold text-brand hover:underline">
             Política de privacidade
           </a>
         </span>

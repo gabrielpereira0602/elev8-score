@@ -49,6 +49,14 @@ export const REGRA = {
     "Descontos não cumulativos: vale o maior. Em serviço mensal, o desconto vale na primeira mensalidade; em projeto, no valor do projeto. Não se aplica ao investimento em anúncios.",
 };
 
+/** O produto em si. Score Vivo: preço de teste (hipótese), ajustar com os primeiros números. */
+export const PRODUTO = {
+  preco: 97,
+  precoReferencia: 197,
+  acessoMeses: 12,
+  scoreVivoMensal: 39,
+};
+
 export type DescontoAtivo = { percentual: number; motivo: string; validoAte?: Date };
 
 export const FUSO = "America/Sao_Paulo";

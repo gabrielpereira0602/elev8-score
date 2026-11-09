@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Camera, Check, CheckCircle2, Circle, Clock, Download, ImageIcon, Lightbulb, Printer, ShieldAlert, Sparkles } from "lucide-react";
+import { Camera, Check, CheckCircle2, Circle, Clock, Download, ImageIcon, Lightbulb, Lock, Printer, ShieldAlert, Sparkles } from "lucide-react";
 import type { EmpresaDemo, Kit, Peca } from "@/lib/contexto";
 import type { Segmento } from "@/lib/segmentos";
 import { CopyButton } from "../CopyButton";
@@ -10,7 +10,7 @@ import { Card } from "../ui";
 import { Plaquinha } from "./Plaquinha";
 import { PostArt } from "./PostArt";
 import { gerarPosts } from "@/lib/posts";
-import { formatarBRL, servico } from "@/lib/elev8";
+import { formatarBRL, formatarData, servico } from "@/lib/elev8";
 
 
 /** O serviço da Elev8 que resolve cada peça. Aparece no momento em que o empresário vê o trabalho que dá. */
@@ -27,7 +27,7 @@ function precoAPartir(id: string) {
   return s.preco === undefined ? "orçamento sob consulta" : `a partir de ${formatarBRL(s.preco)}${s.cobranca === "mensal" ? "/mês" : ""}`;
 }
 
-export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string }) {
+export function KitView({ empresa, segmento, kit, qs, diasDesdeCompra }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string; diasDesdeCompra: number }) {
   const pecas = kit.pecas;
   const [ativa, setAtiva] = useState<Peca["id"]>("avaliacoes");
   const [feitas, setFeitas] = useState<Set<Peca["id"]>>(new Set());
@@ -114,7 +114,7 @@ export function KitView({ empresa, segmento, kit, qs }: { empresa: EmpresaDemo; 
             {ativa === "whatsapp" && <ConteudoWhatsapp kit={kit} />}
             {ativa === "perfil" && <ConteudoPerfil kit={kit} />}
             {ativa === "google" && <ConteudoGoogle kit={kit} />}
-            {ativa === "posts" && <ConteudoPosts empresa={empresa} segmento={segmento} />}
+            {ativa === "posts" && <ConteudoPosts empresa={empresa} segmento={segmento} diasDesdeCompra={diasDesdeCompra} />}
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
               <p className="text-sm text-muted">{feita ? "Ótimo. Isso já conta na sua reavaliação." : "Aplicou? Marque para acompanhar seu plano."}</p>
@@ -263,7 +263,14 @@ function ConteudoGoogle({ kit }: { kit: Kit }) {
 
 const coresTeste = ["#B5476B", "#0E8A8A", "#1F2A44", "#C0392B", "#F2C230", "#2E8B57", "#5B4BDB"];
 
-function ConteudoPosts({ empresa: base, segmento: seg }: { empresa: EmpresaDemo; segmento: Segmento }) {
+/*
+  Posts liberados por semana, no ritmo do plano: a semana 1 abre na compra, a 2 no 7º dia, e assim por diante.
+  Ajuda a pessoa a publicar no ritmo certo e protege o produto de "comprar, copiar tudo e pedir reembolso".
+  Na fase 2, o servidor só envia os posts das semanas já liberadas.
+*/
+const liberaNoDia = (semana: number) => (semana - 1) * 7;
+
+function ConteudoPosts({ empresa: base, segmento: seg, diasDesdeCompra }: { empresa: EmpresaDemo; segmento: Segmento; diasDesdeCompra: number }) {
   const [cor, setCor] = useState(base.cor);
   const [semana, setSemana] = useState(1);
   const [promptAberto, setPromptAberto] = useState<string | null>(null);
@@ -271,6 +278,8 @@ function ConteudoPosts({ empresa: base, segmento: seg }: { empresa: EmpresaDemo;
   const empresa = { ...base, cor };
   const todos = useMemo(() => gerarPosts(empresa), [base.nome, cor]); // eslint-disable-line react-hooks/exhaustive-deps
   const lista = todos.filter((p) => p.semana === semana);
+  const liberada = diasDesdeCompra >= liberaNoDia(semana);
+  const dataLibera = formatarData(new Date(Date.now() + (liberaNoDia(semana) - diasDesdeCompra) * 864e5));
 
   return (
     <div className="flex flex-col gap-4">
@@ -315,11 +324,23 @@ function ConteudoPosts({ empresa: base, segmento: seg }: { empresa: EmpresaDemo;
               s === semana ? "bg-ink text-white" : "bg-subtle text-muted hover:text-ink"
             }`}
           >
+            {diasDesdeCompra < liberaNoDia(s) && <Lock size={12} className="mr-1 inline -translate-y-px" aria-label="ainda não liberada" />}
             Semana {s}
           </button>
         ))}
       </div>
 
+      {!liberada && (
+        <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-line bg-subtle/60 px-5 py-10 text-center">
+          <Lock size={20} className="text-muted" aria-hidden />
+          <p className="font-display font-bold">Os 3 posts da semana {semana} liberam em {dataLibera}</p>
+          <p className="max-w-md text-sm text-muted">
+            Os posts chegam semana a semana, junto com o seu plano, para você publicar no ritmo certo. Você recebe um aviso por e-mail quando liberar.
+          </p>
+        </div>
+      )}
+
+      {liberada && (
       <ul className="grid gap-4 md:grid-cols-3">
         {lista.map((p) => (
           <li key={p.gancho + p.semana} className="flex flex-col overflow-hidden rounded-[12px] border border-line">
@@ -370,6 +391,7 @@ function ConteudoPosts({ empresa: base, segmento: seg }: { empresa: EmpresaDemo;
           </li>
         ))}
       </ul>
+      )}
     </div>
   );
 }

@@ -122,8 +122,11 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
           <p className="flex items-start gap-2.5 text-sm leading-snug text-muted">
             <ShieldCheck size={18} className="mt-0.5 shrink-0 text-good" aria-hidden />
             <span>
-              <b className="font-semibold text-ink">Garantia do Score.</b> Aplicou o kit e seu Score Digital não subiu em 30
-              dias? Devolvemos os R$ 97.
+              <b className="font-semibold text-ink">Garantia do Score.</b> Fez as ações do plano e seu Score Digital não subiu em 30
+              dias? Devolvemos os R$ 97. Comparamos com os concorrentes como estavam no dia do diagnóstico, para contar só o que você fez.{" "}
+              <a href="/termos#garantia" className="underline underline-offset-2 hover:text-ink">
+                Como funciona
+              </a>
             </span>
           </p>
           <p className="text-sm text-muted">Em 30 dias refazemos a análise e mostramos o antes e depois.</p>

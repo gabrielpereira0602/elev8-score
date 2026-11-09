@@ -1,4 +1,4 @@
-import { aplicarKit, calcularScore } from "../src/lib/score";
+import { aplicarKit, calcularScore, reavaliarGarantia } from "../src/lib/score";
 import { liderBusca, metricasHoje } from "../src/lib/mock";
 import { contexto } from "../src/lib/contexto";
 const diagnostico = contexto("estetica").diagnostico;
@@ -23,6 +23,19 @@ const maximo = calcularScore({ avaliacoes: 999, fotos: 999, perfilPreenchido: 10
 confere("empresa perfeita = 100", maximo.total === 100, String(maximo.total));
 const semLider = calcularScore(metricasHoje, { avaliacoes: 0, fotos: 0 });
 confere("sem concorrente na busca não quebra", Number.isFinite(semLider.total), String(semLider.total));
+
+// Garantia: concorrente crescendo não pode tirar a garantia de quem aplicou o plano.
+const depois = aplicarKit(metricasHoje);
+const g = reavaliarGarantia(metricasHoje, depois, liderBusca, 12);
+confere("garantia: aplicou o kit e subiu, não devolve", g.aplicou && !g.devolve && g.scoreDepois > g.scoreAntes, `${g.scoreAntes} → ${g.scoreDepois}`);
+const liderCresceu = { avaliacoes: liderBusca.avaliacoes * 3, fotos: liderBusca.fotos * 3 };
+const real = calcularScore(depois, liderCresceu).total;
+const gCongelada = reavaliarGarantia(metricasHoje, depois, liderBusca, 12);
+confere("garantia usa concorrentes do dia do diagnóstico", gCongelada.scoreDepois === kit.total && real < gCongelada.scoreDepois, `real ${real}, garantia ${gCongelada.scoreDepois}`);
+const parado = reavaliarGarantia(metricasHoje, metricasHoje, liderBusca, 12);
+confere("garantia: aplicou e não subiu, devolve", parado.devolve);
+const naoAplicou = reavaliarGarantia(metricasHoje, metricasHoje, liderBusca, 3);
+confere("garantia: sem as ações do plano, não vale", !naoAplicou.aplicou && !naoAplicou.devolve);
 
 console.log(falhas ? `\n${falhas} falha(s)` : "\nTodos os casos passaram");
 if (falhas) process.exit(1);

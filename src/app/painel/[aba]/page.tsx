@@ -48,7 +48,7 @@ export default async function AbaPage({ params, searchParams }: Props) {
     );
   else if (aba === "kit")
     conteudo = pago ? (
-      <KitView empresa={ctx.empresa} segmento={ctx.segmento} kit={ctx.kit} qs={qs} />
+      <KitView empresa={ctx.empresa} segmento={ctx.segmento} kit={ctx.kit} qs={qs} diasDesdeCompra={30 - d.plano.diasParaReavaliacao} />
     ) : (
       <KitLocked empresa={d.empresa} pecas={ctx.kit.pecas} qs={qs} />
     );

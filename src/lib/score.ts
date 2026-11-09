@@ -64,3 +64,18 @@ export function aplicarKit(m: Metricas): Metricas {
     respostasAvaliacoes: 100,
   };
 }
+
+/*
+  Reavaliação da garantia (dia 30). Os concorrentes ficam como estavam no dia do diagnóstico:
+  assim o Score da garantia só muda pelo que o próprio negócio fez. Se o 1º colocado ganhar
+  50 avaliações no mês, isso não tira do cliente a garantia de quem aplicou o plano.
+  O painel mostra também o Score real de hoje, com os concorrentes atuais, para a pessoa ver o mercado.
+*/
+export const GARANTIA = { acoesMinimas: 10, totalAcoes: 12, dias: 30 };
+
+export function reavaliarGarantia(antes: Metricas, depois: Metricas, liderNoDiagnostico: Lider, acoesFeitas: number) {
+  const scoreAntes = calcularScore(antes, liderNoDiagnostico).total;
+  const scoreDepois = calcularScore(depois, liderNoDiagnostico).total;
+  const aplicou = acoesFeitas >= GARANTIA.acoesMinimas;
+  return { scoreAntes, scoreDepois, aplicou, devolve: aplicou && scoreDepois <= scoreAntes };
+}

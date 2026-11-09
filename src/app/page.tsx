@@ -65,7 +65,11 @@ export default function Inicio() {
           </ul>
         </section>
 
-        <footer className="mt-14 border-t border-line pt-6 text-center text-[13px] text-faint">Elev8 Soluções Digitais</footer>
+        <footer className="mt-14 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-line pt-6 text-center text-[13px] text-faint">
+          <span>Elev8 Soluções Digitais</span>
+          <a href="/privacidade" className="hover:text-ink hover:underline">Privacidade</a>
+          <a href="/termos" className="hover:text-ink hover:underline">Termos de uso</a>
+        </footer>
       </main>
     </div>
   );
