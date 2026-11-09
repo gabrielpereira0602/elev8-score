@@ -37,7 +37,7 @@ export function StickyCTA() {
           <span className="font-display text-lg font-extrabold">R$ 97</span>
         </span>
         <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-brand px-4 py-2.5 text-sm font-semibold">
-          Liberar meu kit
+          Liberar kit e consultor
           <ArrowRight size={16} aria-hidden />
         </span>
       </a>

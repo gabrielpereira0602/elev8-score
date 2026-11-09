@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BarraPrototipo } from "./BarraPrototipo";
-import { LayoutGrid, ScanSearch, Package, CalendarCheck, MessageCircle, Handshake, Lock } from "lucide-react";
+import { LayoutGrid, ScanSearch, Package, CalendarCheck, Sparkles, Handshake, Lock } from "lucide-react";
 
 export type Aba = "visao-geral" | "diagnostico" | "kit" | "plano" | "assistente" | "elev8";
 
@@ -10,7 +10,7 @@ const abas: { id: Aba; nome: string; curto: string; icone: typeof LayoutGrid; pa
   { id: "diagnostico", nome: "Diagnóstico", curto: "Diagnóstico", icone: ScanSearch, pago: false },
   { id: "kit", nome: "Kit pronto", curto: "Kit", icone: Package, pago: true },
   { id: "plano", nome: "Plano 30 dias", curto: "Plano", icone: CalendarCheck, pago: true },
-  { id: "assistente", nome: "Assistente", curto: "Assistente", icone: MessageCircle, pago: true },
+  { id: "assistente", nome: "Consultor IA", curto: "Consultor", icone: Sparkles, pago: true },
   { id: "elev8", nome: "Com a Elev8", curto: "Elev8", icone: Handshake, pago: false },
 ];
 

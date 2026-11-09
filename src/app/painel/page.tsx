@@ -9,6 +9,8 @@ import { PlanProgress } from "@/components/BottomStrip";
 import { StickyCTA } from "@/components/StickyCTA";
 import { kitItens } from "@/lib/mock";
 import { contexto } from "@/lib/contexto";
+import { ConsultorCard } from "@/components/ConsultorCard";
+import { formatarData } from "@/lib/elev8";
 
 type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
 
@@ -44,6 +46,14 @@ export default async function VisaoGeral({ searchParams }: Props) {
           </div>
         </div>
 
+        {pago && (
+          <ConsultorCard
+            qs={montarQs(true, nicho)}
+            ativoAte={formatarData(new Date(new Date(d.dataISO).getTime() + 30 * 864e5))}
+            perguntas={["O que eu faço primeiro esta semana?", ctx.segmento.consultor.pergunta]}
+          />
+        )}
+
         {!pago && <GiftAction titulo={d.presente.titulo} motivo={d.presente.motivo} mensagem={d.presente.mensagem} />}
 
         <div>
@@ -67,6 +77,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
               itens={kitItens}
               bioPrevia={ctx.kit.bios[0].texto}
               hrefLiberar={montarQs(true, nicho)}
+              consultor={{ pergunta: ctx.segmento.consultor.pergunta, setor: ctx.segmento.nome.toLowerCase() }}
             />
           </div>
         )}

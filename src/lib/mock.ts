@@ -75,5 +75,5 @@ export const kitItens = [
   { nome: "Perfil reescrito", detalhe: "3 versões de bio e como ele vai ficar" },
   { nome: "Google Perfil otimizado", detalhe: "descrição e tudo o que falta preencher" },
   { nome: "12 posts prontos", detalhe: "texto, arte e orientação de foto" },
-  { nome: "Plano de 30 dias e assistente", detalhe: "uma ação por vez e dúvidas a qualquer hora" },
+  { nome: "Plano de 30 dias", detalhe: "uma ação por vez, com reavaliação no dia 30" },
 ];

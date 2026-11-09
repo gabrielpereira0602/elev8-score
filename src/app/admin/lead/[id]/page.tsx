@@ -102,7 +102,7 @@ export default async function FichaLead({ params }: Props) {
 
             <div className="grid gap-5 md:grid-cols-2">
               <Card className="p-5">
-                <h2 className="font-display font-bold">Perguntou ao assistente</h2>
+                <h2 className="font-display font-bold">Perguntou ao consultor</h2>
                 {l.perguntasAssistente.length ? (
                   <ul className="mt-3 flex flex-col gap-2 text-sm">
                     {l.perguntasAssistente.map((p) => (

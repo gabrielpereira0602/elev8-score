@@ -93,7 +93,7 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
     etapas: [
       { chave: "encontrado", nome: "Encontrado", pergunta: "Você aparece quando procuram?", nota: hoje.encontrado, lider: 92, status: statusEtapa(hoje.encontrado, 92), resumo: "4º no Google Maps", solucaoKit: "Google Perfil otimizado" },
       { chave: "entendido", nome: "Entendido", pergunta: "Seu perfil explica o que você faz?", nota: hoje.entendido, lider: 84, status: statusEtapa(hoje.entendido, 84), resumo: "Bio não diz o que você faz nem como contratar", solucaoKit: "Perfil reescrito e 12 posts" },
-      { chave: "escolhido", nome: "Escolhido", pergunta: "Há motivos para confiar em você?", nota: hoje.escolhido, lider: 80, status: statusEtapa(hoje.escolhido, 80), resumo: `23 avaliações (líder: 187)`, solucaoKit: "Kit de avaliações com QR code" },
+      { chave: "escolhido", nome: "Escolhido", pergunta: "Há motivos para confiar em você?", nota: hoje.escolhido, lider: 80, status: statusEtapa(hoje.escolhido, 80), resumo: `${metricasHoje.avaliacoes} avaliações (líder: ${liderBusca.avaliacoes})`, solucaoKit: "Kit de avaliações com QR code" },
     ],
     ia: {
       pergunta: `Qual ${e.genero === "a" ? "a melhor" : "o melhor"} ${e.buscaTermo} em ${e.cidade}?`,
@@ -123,10 +123,10 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
   const kit: Kit = {
     linkAvaliacao: `https://g.page/r/${e.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-")}/review`,
     pecas: [
-      { id: "avaliacoes", nome: "Kit de avaliações", etapa: "Escolhido", porQue: "Você tem 23 avaliações e o 1º colocado tem 187. É a diferença que mais pesa no seu Score Digital.", tempo: "10 min para preparar" },
+      { id: "avaliacoes", nome: "Kit de avaliações", etapa: "Escolhido", porQue: `Você tem ${metricasHoje.avaliacoes} avaliações e o 1º colocado tem ${liderBusca.avaliacoes}. É a diferença que mais pesa no seu Score Digital.`, tempo: "10 min para preparar" },
       { id: "whatsapp", nome: "WhatsApp que vende", etapa: "Escolhido", porQue: "Quem te encontra chama no WhatsApp. Uma resposta rápida e clara decide se a pessoa fecha com você ou vai para o concorrente.", tempo: "5 min para salvar" },
       { id: "perfil", nome: "Perfil reescrito", etapa: "Entendido", porQue: `Sua bio atual não diz o que você faz nem como ${s.acao}. Quem chega pela primeira vez não entende em 5 segundos.`, tempo: "5 min para trocar" },
-      { id: "google", nome: "Google Perfil otimizado", etapa: "Encontrado", porQue: "Seu perfil no Google está 60% preenchido; o do 1º colocado, 100%. Perfil completo ajuda a aparecer mais acima no Maps.", tempo: "20 min para atualizar" },
+      { id: "google", nome: "Google Perfil otimizado", etapa: "Encontrado", porQue: `Seu perfil no Google está ${metricasHoje.perfilPreenchido}% preenchido; o do 1º colocado, 100%. Perfil completo ajuda a aparecer mais acima no Maps.`, tempo: "20 min para atualizar" },
       { id: "posts", nome: "12 posts prontos", etapa: "Entendido", porQue: `Mostrar seu trabalho, bastidores e respostas às dúvidas com frequência faz o ${s.cliente === "clientes" ? "cliente" : s.cliente.replace(/s$/, "")} entender e confiar antes de chamar.`, tempo: "3 posts por semana" },
     ],
     mensagensAvaliacao: [

@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, Sparkles } from "lucide-react";
 import { faixaScore, type Concorrente } from "@/lib/mock";
 import { Card, Origem } from "./ui";
 
@@ -10,10 +10,11 @@ type Props = {
   itens: { nome: string; detalhe: string }[];
   bioPrevia: string;
   hrefLiberar: string;
+  consultor: { pergunta: string; setor: string };
 };
 
 /** Versão grátis: a oferta só aparece depois do valor (problema, exclusivo, presente, etapas). */
-export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hrefLiberar }: Props) {
+export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hrefLiberar, consultor }: Props) {
   const faixaHoje = faixaScore(nota).texto;
   const faixaDepois = faixaScore(potencial).texto;
   // Meta próxima e com nome: o concorrente de maior nota que o potencial estimado ultrapassa.
@@ -65,6 +66,25 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
             <p className="mt-2 text-[13px] text-muted">+ 2 outras versões, prontas para copiar</p>
           </div>
 
+          {/* O consultor é o item de maior valor percebido: ganha bloco próprio, em vez de ser a última linha da lista. */}
+          <div className="rounded-[var(--radius-control)] bg-night p-4 text-white md:p-5">
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/70">
+              <Sparkles size={13} aria-hidden />
+              Incluso no kit · 30 dias
+            </p>
+            <h3 className="mt-1 font-display text-lg font-bold">Seu consultor de marketing com IA</h3>
+            <p className="mt-1 text-sm leading-relaxed text-white/75">
+              Pergunte qualquer coisa sobre o marketing de {empresa}, a qualquer hora. Ele já conhece seu diagnóstico, seus concorrentes e as regras de{" "}
+              {consultor.setor}, e responde com passo a passo e texto pronto.
+            </p>
+            <div className="mt-3 flex flex-col gap-2">
+              <p className="max-w-[90%] self-end rounded-[12px] rounded-br-[4px] bg-brand px-3 py-2 text-[13px]">{consultor.pergunta}</p>
+              <p className="max-w-[90%] self-start rounded-[12px] rounded-tl-[4px] bg-white/10 px-3 py-2 text-[13px] text-white/80">
+                Resposta feita para {empresa}, com o texto pronto para copiar.
+              </p>
+            </div>
+          </div>
+
           <ul className="flex flex-col divide-y divide-line border-y border-line">
             {itens.map((i) => (
               <li key={i.nome} className="flex items-start gap-3 py-2.5 text-[15px]">
@@ -96,7 +116,7 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
             href={hrefLiberar}
             className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] bg-brand px-5 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
-            Liberar meu kit
+            Liberar kit e consultor
             <ArrowRight size={18} aria-hidden />
           </a>
           <p className="flex items-start gap-2.5 text-sm leading-snug text-muted">

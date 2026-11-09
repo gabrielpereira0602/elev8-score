@@ -2,23 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUp, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, Sparkles } from "lucide-react";
 import type { Contexto } from "@/lib/contexto";
-import { responder, sugestoes, type Resposta } from "@/lib/assistente";
+import { responder, saudacao, type Resposta } from "@/lib/assistente";
 import { Card } from "../ui";
 
 type Msg = { de: "voce" | "assistente"; texto: string; extra?: Resposta };
 
 const LIMITE_DIA = 20;
 
-export function Assistente({ ctx, qs, ativoAte }: { ctx: Contexto; qs: string; ativoAte: string }) {
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      de: "assistente",
-      texto: `Oi! Eu conheço o diagnóstico de ${ctx.empresa.nome}, o seu kit e o seu plano. Pode perguntar o que quiser sobre eles, ou escolher uma das perguntas abaixo.`,
-    },
-  ]);
-  const [texto, setTexto] = useState("");
+type Props = { ctx: Contexto; qs: string; ativoAte: string; sugestoes: string[]; perguntaInicial?: string };
+
+export function Assistente({ ctx, qs, ativoAte, sugestoes, perguntaInicial = "" }: Props) {
+  const [msgs, setMsgs] = useState<Msg[]>([{ de: "assistente", texto: saudacao(ctx) }]);
+  // Pergunta vinda da visão geral: fica escrita no campo, a pessoa só confirma (não gasta pergunta sem querer).
+  const [texto, setTexto] = useState(perguntaInicial);
   const [pensando, setPensando] = useState(false);
   const [usadas, setUsadas] = useState(0);
   const fim = useRef<HTMLDivElement>(null);
@@ -47,11 +45,27 @@ export function Assistente({ ctx, qs, ativoAte }: { ctx: Contexto; qs: string; a
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Assistente</h1>
-          <p className="mt-1 text-sm text-muted">Tire dúvidas sobre o seu diagnóstico, o kit e o plano. Ativo até {ativoAte}.</p>
+          <p className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-brand">
+            <Sparkles size={14} aria-hidden />
+            Incluso no seu kit · ativo até {ativoAte}
+          </p>
+          <h1 className="mt-1 font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Seu consultor de marketing</h1>
+          <p className="mt-1 max-w-2xl text-sm text-muted">
+            Pergunte qualquer coisa sobre o marketing de {ctx.empresa.nome}: Instagram, Google, WhatsApp, avaliações, ofertas e anúncios. Ele responde com
+            passo a passo e texto pronto para copiar.
+          </p>
         </div>
         <p className="tabular text-sm text-muted">{restantes} de {LIMITE_DIA} perguntas hoje</p>
       </div>
+
+      <ul className="flex flex-wrap gap-2" aria-label="O que o consultor já conhece">
+        {["Seu diagnóstico", "Seus 3 concorrentes", `Regras de ${ctx.segmento.nome.toLowerCase()}`, "Seu kit e seu plano"].map((t) => (
+          <li key={t} className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-medium shadow-[inset_0_0_0_1px_var(--color-line)]">
+            <Check size={13} strokeWidth={3} className="text-good" aria-hidden />
+            {t}
+          </li>
+        ))}
+      </ul>
 
       <Card className="flex flex-col overflow-hidden">
         <div className="flex max-h-[60vh] min-h-[22rem] flex-col gap-4 overflow-y-auto p-5 md:p-6" aria-live="polite">
@@ -70,6 +84,12 @@ export function Assistente({ ctx, qs, ativoAte }: { ctx: Contexto; qs: string; a
                   {m.extra?.linkElev8 && (
                     <Link href={`/painel/elev8${qs}`} className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand hover:underline">
                       Ver opções com a Elev8
+                      <ArrowRight size={14} aria-hidden />
+                    </Link>
+                  )}
+                  {m.extra?.linkPlano && (
+                    <Link href={`/painel/plano${qs}`} className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand hover:underline">
+                      Abrir meu plano
                       <ArrowRight size={14} aria-hidden />
                     </Link>
                   )}
@@ -139,7 +159,7 @@ export function Assistente({ ctx, qs, ativoAte }: { ctx: Contexto; qs: string; a
               <ArrowUp size={20} aria-hidden />
             </button>
           </form>
-          <p className="mt-2 text-xs text-faint">Protótipo: respostas de exemplo montadas com os seus dados. A IA completa entra na próxima fase.</p>
+          <p className="mt-2 text-xs text-faint">Protótipo: respostas de exemplo montadas com os seus dados. Na versão final, a IA responde qualquer pergunta de marketing. Ela orienta o seu marketing e não substitui a orientação de profissionais de outras áreas.</p>
         </div>
       </Card>
     </div>

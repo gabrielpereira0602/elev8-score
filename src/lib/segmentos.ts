@@ -42,6 +42,15 @@ export type Segmento = {
   permitePreco: boolean;
   /** Regras do setor que a IA segue e que o empresário vê antes de publicar. */
   regras: string[];
+  /** O que o consultor sabe do setor, além do diagnóstico. */
+  consultor: {
+    /** Datas que movem o setor. mes: 1 a 12. */
+    datas: { mes: number; nome: string; ideia: string }[];
+    /** Como se referir ao último contato com quem já é cliente. */
+    retorno: string;
+    /** Pergunta típica do dono desse tipo de negócio (vitrine do consultor). */
+    pergunta: string;
+  };
 };
 
 export const segmentos: Record<SegmentoId, Segmento> = {
@@ -65,6 +74,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Não prometa resultado garantido de tratamento.", "Fotos de antes e depois só com autorização por escrito da cliente."],
+    consultor: {
+      datas: [
+        { mes: 5, nome: "Dia das Mães", ideia: "vale-presente de um tratamento, com post mostrando a experiência (não o preço primeiro)" },
+        { mes: 11, nome: "Preparação para o verão", ideia: "post explicando quais tratamentos pedem antecedência para ficar pronto até dezembro" },
+        { mes: 12, nome: "Festas de fim de ano", ideia: "agenda das últimas semanas do ano e vale-presente para quem quer presentear" },
+        { mes: 1, nome: "Começo do ano", ideia: "rotina de cuidados para o ano, com a avaliação como primeiro passo" },
+      ],
+      retorno: "sua última sessão",
+      pergunta: "Como faço a cliente que só pergunta o preço agendar?",
+    },
   },
   odontologia: {
     id: "odontologia",
@@ -89,6 +108,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
       "Siga as regras de publicidade do conselho de odontologia: sem preço, sem promoção e sem promessa de resultado.",
       "Antes e depois só dentro das regras do conselho e com autorização do paciente.",
     ],
+    consultor: {
+      datas: [
+        { mes: 1, nome: "Volta às aulas", ideia: "post informativo sobre a consulta das crianças antes do ano letivo" },
+        { mes: 7, nome: "Férias escolares", ideia: "lembrete de que as férias são um bom momento para a consulta de rotina das crianças" },
+        { mes: 10, nome: "Dia do Dentista (25/10)", ideia: "bastidor da equipe e o que acontece numa consulta, sem preço e sem promoção" },
+        { mes: 12, nome: "Fim de ano", ideia: "post informativo sobre cuidados com o sorriso nas festas e o horário de atendimento de fim de ano" },
+      ],
+      retorno: "sua última consulta",
+      pergunta: "Como respondo quem pergunta o valor da consulta sem falar preço em post?",
+    },
   },
   advocacia: {
     id: "advocacia",
@@ -113,6 +142,15 @@ export const segmentos: Record<SegmentoId, Segmento> = {
       "Conteúdo informativo, sem captação de clientela nem mercantilização (regras da OAB).",
       "Não prometa resultado de processo nem cite valores de honorários.",
     ],
+    consultor: {
+      datas: [
+        { mes: 3, nome: "Dia do Consumidor (15/03)", ideia: "conteúdo informativo sobre direitos que as pessoas costumam desconhecer" },
+        { mes: 8, nome: "Dia do Advogado (11/08)", ideia: "bastidor do escritório e como funciona o primeiro atendimento, sem captação" },
+        { mes: 12, nome: "Fim de ano", ideia: "post informativo sobre o que vale a pena resolver antes de janeiro e o horário do escritório no recesso" },
+      ],
+      retorno: "nosso último contato",
+      pergunta: "O que posso postar sem desrespeitar as regras da OAB?",
+    },
   },
   restaurante: {
     id: "restaurante",
@@ -134,6 +172,17 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Fotos de prato sempre do prato real servido na casa."],
+    consultor: {
+      datas: [
+        { mes: 5, nome: "Dia das Mães", ideia: "reserva antecipada para o almoço de domingo, com os pratos da data" },
+        { mes: 6, nome: "Dia dos Namorados (12/06)", ideia: "jantar a dois com reserva e o prato da noite" },
+        { mes: 8, nome: "Dia dos Pais", ideia: "almoço em família com reserva antecipada" },
+        { mes: 11, nome: "Confraternizações de fim de ano", ideia: "post para empresas e grupos reservarem o fim de ano antes de lotar" },
+        { mes: 12, nome: "Festas de fim de ano", ideia: "horários de funcionamento nas festas e encomendas, se você fizer" },
+      ],
+      retorno: "sua última visita",
+      pergunta: "Como faço quem veio uma vez voltar mais vezes?",
+    },
   },
   academia: {
     id: "academia",
@@ -155,6 +204,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Não prometa perda de peso ou resultado em prazo definido."],
+    consultor: {
+      datas: [
+        { mes: 1, nome: "Metas de ano novo", ideia: "aula experimental para quem quer começar o ano com rotina, sem promessa de resultado" },
+        { mes: 7, nome: "Férias de julho", ideia: "como manter a rotina de treino nas férias" },
+        { mes: 9, nome: "Primavera", ideia: "convite para uma aula experimental, mostrando a turma e o ambiente" },
+        { mes: 12, nome: "Fim de ano", ideia: "horário das festas e como não parar totalmente em dezembro" },
+      ],
+      retorno: "sua última aula",
+      pergunta: "Como faço quem fez a aula experimental fechar o plano?",
+    },
   },
   pet: {
     id: "pet",
@@ -176,6 +235,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Foto de pet de cliente só com autorização do tutor."],
+    consultor: {
+      datas: [
+        { mes: 10, nome: "Dia dos Animais (04/10)", ideia: "fotos dos pets atendidos (com autorização) e cuidados da estação" },
+        { mes: 11, nome: "Calor e verão", ideia: "cuidados com o pet no calor e a importância do banho regular" },
+        { mes: 12, nome: "Festas e fogos", ideia: "como proteger o pet dos fogos e a agenda de banho antes das festas" },
+        { mes: 1, nome: "Férias e viagens", ideia: "o que fazer com o pet quando a família viaja" },
+      ],
+      retorno: "o último banho do seu pet",
+      pergunta: "Como faço o tutor agendar o banho todo mês?",
+    },
   },
   beleza: {
     id: "beleza",
@@ -197,6 +266,17 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Foto de cliente só com autorização."],
+    consultor: {
+      datas: [
+        { mes: 5, nome: "Dia das Mães", ideia: "vale-presente de um serviço e agenda do fim de semana da data" },
+        { mes: 6, nome: "Dia dos Namorados (12/06)", ideia: "horários extras na semana da data, avisados com antecedência" },
+        { mes: 8, nome: "Dia dos Pais", ideia: "vale-presente de um serviço para presentear" },
+        { mes: 11, nome: "Agenda de fim de ano", ideia: "abrir a agenda de dezembro antes e avisar que os horários acabam rápido nessa época" },
+        { mes: 12, nome: "Festas de fim de ano", ideia: "últimos horários antes das festas e horário de funcionamento" },
+      ],
+      retorno: "seu último horário",
+      pergunta: "Como encho os horários vazios do meio da semana?",
+    },
   },
   loja: {
     id: "loja",
@@ -218,6 +298,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Preço anunciado precisa ser o preço praticado."],
+    consultor: {
+      datas: [
+        { mes: 5, nome: "Dia das Mães", ideia: "sugestões de presente por faixa de valor, com entrega ou retirada" },
+        { mes: 6, nome: "Dia dos Namorados (12/06)", ideia: "presentes prontos para levar, com embalagem" },
+        { mes: 11, nome: "Black Friday", ideia: "condição real com data de fim clara, avisada antes para quem já é cliente" },
+        { mes: 12, nome: "Natal", ideia: "guia de presentes e o último dia para entrega antes do Natal" },
+      ],
+      retorno: "sua última compra",
+      pergunta: "Como faço a cliente que só olha o Instagram vir à loja?",
+    },
   },
   generico: {
     id: "generico",
@@ -239,6 +329,16 @@ export const segmentos: Record<SegmentoId, Segmento> = {
     },
     permitePreco: true,
     regras: ["Não prometa resultado que você não pode garantir."],
+    consultor: {
+      datas: [
+        { mes: 1, nome: "Começo do ano", ideia: "o que o seu cliente precisa organizar no início do ano e como você ajuda" },
+        { mes: 9, nome: "Dia do Cliente (15/09)", ideia: "agradecimento a quem já é cliente, com um bastidor real do seu trabalho" },
+        { mes: 11, nome: "Black Friday", ideia: "só se fizer sentido para o seu serviço: condição real e data de fim clara" },
+        { mes: 12, nome: "Fim de ano", ideia: "horário de funcionamento nas festas e o que resolver antes de janeiro" },
+      ],
+      retorno: "nosso último contato",
+      pergunta: "Como explico o valor do meu serviço para quem acha caro?",
+    },
   },
 };
 
