@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { ScanSearch, ShieldCheck, Sparkles, Trophy, Gift } from "lucide-react";
 import { Entrada } from "@/components/entrada/Entrada";
+import { negocioDoConvite } from "@/lib/prospeccao";
+import { parceiroPorCodigo } from "@/lib/parceiros";
 
 const gratis = [
   { icone: Trophy, titulo: "Seu Score Digital", texto: "A nota de 0 a 100 da sua empresa, ao lado dos 3 concorrentes mais próximos." },
@@ -9,7 +11,12 @@ const gratis = [
   { icone: Gift, titulo: "Uma ação de presente", texto: "A primeira peça do kit pronta para usar hoje mesmo." },
 ];
 
-export default function Inicio() {
+type Props = { searchParams: Promise<{ convite?: string; parceiro?: string }> };
+
+export default async function Inicio({ searchParams }: Props) {
+  const sp = await searchParams;
+  const convite = typeof sp.convite === "string" ? negocioDoConvite(sp.convite) : null;
+  const p = parceiroPorCodigo(typeof sp.parceiro === "string" ? sp.parceiro : undefined);
   return (
     <div className="min-h-dvh">
       <section className="bg-night text-white">
@@ -39,7 +46,7 @@ export default function Inicio() {
 
       <main className="mx-auto -mt-32 max-w-6xl px-4 pb-16 md:-mt-36 md:px-8">
         <div className="mx-auto max-w-xl">
-          <Entrada />
+          <Entrada inicial={convite ?? undefined} parceiro={p ? { codigo: p.codigo, nome: p.nome } : undefined} />
           <p className="mt-4 flex items-center justify-center gap-2 text-center text-[13px] text-muted">
             <ShieldCheck size={15} className="shrink-0 text-good" aria-hidden />
             Usamos apenas dados públicos do Google e das redes. Não pedimos senha de nada.

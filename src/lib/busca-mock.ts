@@ -12,7 +12,7 @@ export type Negocio = {
 };
 
 // Protótipo: as empresas da busca são as mesmas do painel (contexto.ts), para a jornada ser coerente.
-const categorias: Record<string, string> = {
+export const CATEGORIAS_BUSCA: Record<string, string> = {
   estetica: "Clínica de estética",
   odontologia: "Dentista",
   advocacia: "Advogado trabalhista",
@@ -28,7 +28,7 @@ export const negocios: Negocio[] = empresasDemo.map((e) => ({
   id: e.segmento,
   nome: e.nome,
   endereco: `${e.endereco} · ${e.cidade}, ${e.uf}`,
-  categoria: categorias[e.segmento] ?? e.buscaTermo,
+  categoria: CATEGORIAS_BUSCA[e.segmento] ?? e.buscaTermo,
   nota: 4.6,
   avaliacoes: 23,
 }));

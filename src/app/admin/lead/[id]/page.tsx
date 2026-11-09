@@ -5,7 +5,8 @@ import { AdminShell, TempBadge } from "@/components/admin/AdminShell";
 import { AcoesLead } from "@/components/admin/AcoesLead";
 import { CopyButton } from "@/components/CopyButton";
 import { Card, StatusBadge } from "@/components/ui";
-import { etapas, filaDeHoje, leads, temperatura } from "@/lib/admin-mock";
+import { ORIGENS, etapas, filaDeHoje, leads, temperatura } from "@/lib/admin-mock";
+import { parceiroPorCodigo } from "@/lib/parceiros";
 import { descontoAtivo } from "@/lib/elev8";
 import { faixaScore } from "@/lib/mock";
 import { segmentos } from "@/lib/segmentos";
@@ -42,6 +43,9 @@ export default async function FichaLead({ params }: Props) {
             </div>
             <p className="mt-1 text-sm text-muted">
               {l.nome} · {s.nome} · {l.cidade} · {etapas.find((e) => e.id === l.etapa)?.nome} · diagnóstico {l.diasDesdeDiagnostico === 0 ? "hoje" : `há ${l.diasDesdeDiagnostico} dias`}
+              {" · origem: "}
+              {l.origem === "parceiro" ? `parceiro ${parceiroPorCodigo(l.parceiro)?.nome ?? ""}` : ORIGENS[l.origem ?? "anuncio"].toLowerCase()}
+              {l.scoreVivo && " · assinante Score Vivo"}
             </p>
           </div>
           {itemFila && <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand-ink">Na fila de hoje: {itemFila.motivo}</span>}

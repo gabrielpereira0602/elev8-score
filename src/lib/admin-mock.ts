@@ -3,6 +3,7 @@
   Datas relativas a "hoje" para a fila e os prazos de desconto ficarem realistas no protótipo.
 */
 import { segmentos, type SegmentoId } from "./segmentos";
+import { PRODUTO } from "./elev8";
 
 export type Etapa = "diagnostico" | "comprou" | "aplicando" | "reavaliado" | "proposta" | "cliente" | "perdido";
 export type Temperatura = "quente" | "morno" | "frio";
@@ -36,6 +37,16 @@ export type Lead = {
   proposta?: { resolver: string[]; orcamento: string; prazo: string };
   contrato?: { servico: string; valor: number };
   ultimoContatoDias?: number;
+  /** De onde veio: anúncio, convite do Ciclo do concorrente ou link de parceiro. */
+  origem?: "anuncio" | "prospeccao" | "parceiro";
+  parceiro?: string; // código do parceiro
+  scoreVivo?: boolean; // assinante do acompanhamento mensal
+};
+
+export const ORIGENS: Record<NonNullable<Lead["origem"]>, string> = {
+  anuncio: "Anúncio",
+  prospeccao: "Ciclo do concorrente",
+  parceiro: "Parceiro",
 };
 
 const L = (l: Lead) => l;
@@ -43,16 +54,16 @@ const L = (l: Lead) => l;
 export const leads: Lead[] = [
   L({ id: "l01", nome: "Ana Souza", empresa: "Clínica Bella Pele", segmento: "estetica", cidade: "Vinhedo", whatsapp: "19991230001", email: "ana@bellapele.com.br", etapa: "proposta", comprouKit: true, score: 38, diasDesdeDiagnostico: 3, voltouAoPainel: true, acoesFeitas: 4, perguntasAssistente: ["Como respondo uma avaliação ruim?", "Quanto custa um site novo?"], servicosVistos: ["Landing Page Estratégica", "Meta Ads + Google Ads"], proposta: { resolver: ["Site ou landing page nova", "Anúncios no Google e no Instagram"], orcamento: "De R$ 1.000 a R$ 3.000", prazo: "Quero começar agora" } }),
   L({ id: "l02", nome: "Ricardo Moura", empresa: "Moura Advocacia", segmento: "advocacia", cidade: "Jundiaí", whatsapp: "11981230002", email: "ricardo@mouraadv.com.br", etapa: "proposta", comprouKit: false, score: 41, diasDesdeDiagnostico: 6, voltouAoPainel: true, acoesFeitas: 7, perguntasAssistente: ["Posso fazer anúncio sendo advogado?"], servicosVistos: ["Google Ads", "SEO e SEO Local"], proposta: { resolver: ["Google Perfil e SEO local"], orcamento: "Até R$ 1.000", prazo: "No próximo mês" } }),
-  L({ id: "l03", nome: "Giulia Ferri", empresa: "Cantina da Nonna", segmento: "restaurante", cidade: "Vinhedo", whatsapp: "19991230003", email: "contato@cantinadanonna.com.br", etapa: "comprou", comprouKit: true, score: 44, diasDesdeDiagnostico: 4, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
-  L({ id: "l04", nome: "Marcos Lima", empresa: "Studio Move", segmento: "academia", cidade: "Valinhos", whatsapp: "19991230004", email: "marcos@studiomove.com.br", etapa: "aplicando", comprouKit: true, score: 36, diasDesdeDiagnostico: 12, voltouAoPainel: true, acoesFeitas: 6, perguntasAssistente: ["Faz um post para o Dia do Professor de Educação Física"], servicosVistos: ["Gestão de Redes Sociais"] }),
-  L({ id: "l05", nome: "Paula Rocha", empresa: "Pet Vinhedo", segmento: "pet", cidade: "Vinhedo", whatsapp: "19991230005", email: "paula@petvinhedo.com.br", etapa: "reavaliado", comprouKit: true, score: 63, diasDesdeDiagnostico: 31, voltouAoPainel: true, acoesFeitas: 11, perguntasAssistente: ["O que eu faço depois dos 30 dias?"], servicosVistos: ["Meta Ads Essencial"] }),
-  L({ id: "l06", nome: "José Almeida", empresa: "Barbearia do Zé", segmento: "beleza", cidade: "Vinhedo", whatsapp: "19991230006", email: "ze@barbeariadoze.com.br", etapa: "diagnostico", comprouKit: false, score: 29, diasDesdeDiagnostico: 2, voltouAoPainel: true, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
-  L({ id: "l07", nome: "Carla Mendes", empresa: "Ateliê Flor de Lis", segmento: "loja", cidade: "Vinhedo", whatsapp: "19991230007", email: "carla@flordelis.com.br", etapa: "cliente", comprouKit: true, score: 47, diasDesdeDiagnostico: 9, voltouAoPainel: true, acoesFeitas: 5, perguntasAssistente: ["Vale a pena ter loja virtual?"], servicosVistos: ["Loja Virtual / E-commerce"], contrato: { servico: "Site Institucional (até 5 páginas)", valor: 1680 } }),
+  L({ id: "l03", origem: "parceiro", parceiro: "contabil-alianca", nome: "Giulia Ferri", empresa: "Cantina da Nonna", segmento: "restaurante", cidade: "Vinhedo", whatsapp: "19991230003", email: "contato@cantinadanonna.com.br", etapa: "comprou", comprouKit: true, score: 44, diasDesdeDiagnostico: 4, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
+  L({ id: "l04", origem: "parceiro", parceiro: "contabil-alianca", nome: "Marcos Lima", empresa: "Studio Move", segmento: "academia", cidade: "Valinhos", whatsapp: "19991230004", email: "marcos@studiomove.com.br", etapa: "aplicando", comprouKit: true, score: 36, diasDesdeDiagnostico: 12, voltouAoPainel: true, acoesFeitas: 6, perguntasAssistente: ["Faz um post para o Dia do Professor de Educação Física"], servicosVistos: ["Gestão de Redes Sociais"] }),
+  L({ id: "l05", scoreVivo: true, nome: "Paula Rocha", empresa: "Pet Vinhedo", segmento: "pet", cidade: "Vinhedo", whatsapp: "19991230005", email: "paula@petvinhedo.com.br", etapa: "reavaliado", comprouKit: true, score: 63, diasDesdeDiagnostico: 31, voltouAoPainel: true, acoesFeitas: 11, perguntasAssistente: ["O que eu faço depois dos 30 dias?"], servicosVistos: ["Meta Ads Essencial"] }),
+  L({ id: "l06", origem: "parceiro", parceiro: "distribuidora-beleza", nome: "José Almeida", empresa: "Barbearia do Zé", segmento: "beleza", cidade: "Vinhedo", whatsapp: "19991230006", email: "ze@barbeariadoze.com.br", etapa: "diagnostico", comprouKit: false, score: 29, diasDesdeDiagnostico: 2, voltouAoPainel: true, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
+  L({ id: "l07", scoreVivo: true, nome: "Carla Mendes", empresa: "Ateliê Flor de Lis", segmento: "loja", cidade: "Vinhedo", whatsapp: "19991230007", email: "carla@flordelis.com.br", etapa: "cliente", comprouKit: true, score: 47, diasDesdeDiagnostico: 9, voltouAoPainel: true, acoesFeitas: 5, perguntasAssistente: ["Vale a pena ter loja virtual?"], servicosVistos: ["Loja Virtual / E-commerce"], contrato: { servico: "Site Institucional (até 5 páginas)", valor: 1680 } }),
   L({ id: "l08", nome: "Fernando Dias", empresa: "Bellatrix Contabilidade", segmento: "generico", cidade: "Vinhedo", whatsapp: "19991230008", email: "fernando@bellatrix.com.br", etapa: "diagnostico", comprouKit: false, score: 52, diasDesdeDiagnostico: 1, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
-  L({ id: "l09", nome: "Luciana Prado", empresa: "OdontoVita", segmento: "odontologia", cidade: "Vinhedo", whatsapp: "19991230009", email: "luciana@odontovita.com.br", etapa: "comprou", comprouKit: true, score: 48, diasDesdeDiagnostico: 2, voltouAoPainel: true, acoesFeitas: 2, perguntasAssistente: ["Posso postar antes e depois?"], servicosVistos: [] }),
-  L({ id: "l10", nome: "Tiago Ramos", empresa: "Dom Barber", segmento: "beleza", cidade: "Valinhos", whatsapp: "19991230010", email: "tiago@dombarber.com.br", etapa: "diagnostico", comprouKit: false, score: 33, diasDesdeDiagnostico: 5, voltouAoPainel: true, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: ["Landing Page Essencial"] }),
-  L({ id: "l11", nome: "Beatriz Costa", empresa: "Espaço Vitta", segmento: "estetica", cidade: "Vinhedo", whatsapp: "19991230011", email: "bia@espacovitta.com.br", etapa: "perdido", comprouKit: false, score: 57, diasDesdeDiagnostico: 20, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [], ultimoContatoDias: 10 }),
-  L({ id: "l12", nome: "Renato Silva", empresa: "Mundo Pet", segmento: "pet", cidade: "Vinhedo", whatsapp: "19991230012", email: "renato@mundopet.com.br", etapa: "diagnostico", comprouKit: false, score: 61, diasDesdeDiagnostico: 9, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
+  L({ id: "l09", origem: "anuncio", nome: "Luciana Prado", empresa: "OdontoVita", segmento: "odontologia", cidade: "Vinhedo", whatsapp: "19991230009", email: "luciana@odontovita.com.br", etapa: "comprou", comprouKit: true, score: 48, diasDesdeDiagnostico: 2, voltouAoPainel: true, acoesFeitas: 2, perguntasAssistente: ["Posso postar antes e depois?"], servicosVistos: [] }),
+  L({ id: "l10", origem: "prospeccao", nome: "Tiago Ramos", empresa: "Dom Barber", segmento: "beleza", cidade: "Valinhos", whatsapp: "19991230010", email: "tiago@dombarber.com.br", etapa: "diagnostico", comprouKit: false, score: 33, diasDesdeDiagnostico: 5, voltouAoPainel: true, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: ["Landing Page Essencial"] }),
+  L({ id: "l11", origem: "prospeccao", nome: "Beatriz Costa", empresa: "Espaço Vitta", segmento: "estetica", cidade: "Vinhedo", whatsapp: "19991230011", email: "bia@espacovitta.com.br", etapa: "perdido", comprouKit: false, score: 57, diasDesdeDiagnostico: 20, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [], ultimoContatoDias: 10 }),
+  L({ id: "l12", origem: "prospeccao", nome: "Renato Silva", empresa: "Mundo Pet", segmento: "pet", cidade: "Vinhedo", whatsapp: "19991230012", email: "renato@mundopet.com.br", etapa: "diagnostico", comprouKit: false, score: 61, diasDesdeDiagnostico: 9, voltouAoPainel: false, acoesFeitas: 0, perguntasAssistente: [], servicosVistos: [] }),
 ];
 
 /** Temperatura calculada sozinha, pelas regras do documento do produto. */
@@ -101,7 +112,9 @@ export function numeros(lista: Lead[]) {
   return {
     diagnosticos: lista.length,
     compras: compraram,
-    receitaKit: compraram * 97,
+    receitaKit: compraram * PRODUTO.preco,
+    assinantesScoreVivo: lista.filter((l) => l.scoreVivo).length,
+    mrrScoreVivo: lista.filter((l) => l.scoreVivo).length * PRODUTO.scoreVivoMensal,
     propostas,
     clientes: clientes.length,
     receitaServicos: clientes.reduce((t, l) => t + (l.contrato?.valor ?? 0), 0),

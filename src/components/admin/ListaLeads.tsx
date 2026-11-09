@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { etapas, temperatura, type Lead, type Temperatura } from "@/lib/admin-mock";
+import { ORIGENS, etapas, temperatura, type Lead, type Temperatura } from "@/lib/admin-mock";
 import { listaSegmentos, segmentos } from "@/lib/segmentos";
 import { Card } from "../ui";
 import { TempBadge } from "./AdminShell";
@@ -102,7 +102,11 @@ export function ListaLeads({ leads }: { leads: Lead[] }) {
                   <Link href={`/admin/lead/${l.id}`} className="font-semibold hover:text-brand hover:underline">
                     {l.empresa}
                   </Link>
-                  <p className="text-[12.5px] text-muted">{l.nome}</p>
+                  <p className="text-[12.5px] text-muted">
+                    {l.nome}
+                    {l.origem && l.origem !== "anuncio" && <span className="ml-1.5 rounded-full bg-brand-soft px-1.5 py-px text-[11px] font-semibold text-brand-ink">{ORIGENS[l.origem]}</span>}
+                    {l.scoreVivo && <span className="ml-1.5 rounded-full bg-good-soft px-1.5 py-px text-[11px] font-semibold text-good">Score Vivo</span>}
+                  </p>
                 </td>
                 <td className="px-3 py-3 text-muted">{segmentos[l.segmento].nome}</td>
                 <td className="px-3 py-3">{etapas.find((e) => e.id === l.etapa)?.nome}</td>

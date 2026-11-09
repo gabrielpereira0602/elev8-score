@@ -17,6 +17,7 @@ export default function Admin() {
     { rotulo: "Compraram o kit", valor: String(n.compras), detalhe: `${formatarBRL(n.receitaKit)} · ${pct(n.compras, n.diagnosticos)}% dos diagnósticos` },
     { rotulo: "Pediram proposta", valor: String(n.propostas), detalhe: `${pct(n.propostas, n.diagnosticos)}% dos diagnósticos` },
     { rotulo: "Viraram clientes", valor: String(n.clientes), detalhe: `${formatarBRL(n.receitaServicos)} em serviços` },
+    { rotulo: "Score Vivo", valor: String(n.assinantesScoreVivo), detalhe: `${formatarBRL(n.mrrScoreVivo)}/mês recorrente` },
   ];
 
   const funil = [
@@ -34,7 +35,7 @@ export default function Admin() {
           <p className="mt-1 text-sm text-muted">Últimos 30 dias</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {cartoes.map((c) => (
             <Card key={c.rotulo} className="p-4 md:p-5">
               <p className="text-[13px] font-medium text-muted">{c.rotulo}</p>

@@ -12,10 +12,17 @@ type Passo = "busca" | "confirmar" | "contato" | "analisando";
 const botaoPrimario =
   "inline-flex w-full items-center justify-center gap-2 rounded-[var(--radius-control)] bg-brand px-5 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50";
 
-export function Entrada() {
-  const [passo, setPasso] = useState<Passo>("busca");
-  const [negocio, setNegocio] = useState<Negocio | null>(null);
-  const [segmento, setSegmento] = useState<SegmentoId>("generico");
+type EntradaProps = {
+  /** Convite do Ciclo do concorrente: a empresa já vem escolhida e a entrada começa na confirmação. */
+  inicial?: { negocio: Negocio; segmento: SegmentoId };
+  /** Link de parceiro: o nome aparece na entrada e o lead fica marcado com a origem. */
+  parceiro?: { codigo: string; nome: string };
+};
+
+export function Entrada({ inicial, parceiro }: EntradaProps = {}) {
+  const [passo, setPasso] = useState<Passo>(inicial ? "confirmar" : "busca");
+  const [negocio, setNegocio] = useState<Negocio | null>(inicial?.negocio ?? null);
+  const [segmento, setSegmento] = useState<SegmentoId>(inicial?.segmento ?? "generico");
   const caixaRef = useRef<HTMLDivElement>(null);
   const primeiraVez = useRef(true);
 
@@ -42,6 +49,19 @@ export function Entrada() {
 
   return (
     <div ref={caixaRef} className="rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-[0_12px_40px_-12px_rgba(5,7,13,0.25)] md:p-7">
+      {(inicial || parceiro) && (
+        <p className="-mx-1 mb-4 rounded-[10px] bg-brand-soft px-3.5 py-2.5 text-[13px] text-brand-ink">
+          {inicial ? (
+            <>
+              <b className="font-semibold">Convite da Elev8.</b> O Score Digital de {inicial.negocio.nome} está pronto para gerar. Confira o tipo de negócio e siga.
+            </>
+          ) : (
+            <>
+              <b className="font-semibold">Indicado por {parceiro!.nome}</b>, parceiro da Elev8.
+            </>
+          )}
+        </p>
+      )}
       <div className="mb-5 flex items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-faint">{numero === 3 ? "Último passo" : `Passo ${numero} de 3`}</p>
         <div className="flex gap-1.5" aria-hidden>
@@ -179,7 +199,9 @@ function PassoConfirmar({ negocio, segmento, setSegmento, onVoltar, onSeguir }: 
   // Detecção pela categoria do Google (feita ao escolher a empresa), sempre confirmável. Sem correspondência, perfil genérico.
   // Protótipo: concorrentes de exemplo do nicho. Na fase 2, vêm da mesma busca no Google Maps.
   const [aviso, setAviso] = useState(false);
-  const concorrentesNicho = contexto(segmento).empresa.concorrentes.map((nome, i) => ({ ...concorrentesSugeridos[i], nome }));
+  // A própria empresa nunca aparece como concorrente dela mesma (acontece quando ela chega por convite).
+  const nomesNicho = [contexto(segmento).empresa.nome, ...contexto(segmento).empresa.concorrentes].filter((n) => n !== negocio.nome).slice(-3);
+  const concorrentesNicho = nomesNicho.map((nome, i) => ({ ...concorrentesSugeridos[i], nome }));
   const termoBusca = `${segmentos[segmento].nome.toLowerCase()} em ${negocio.endereco.split("·").pop()?.trim().split(",")[0] ?? "sua cidade"}`;
 
   return (
