@@ -2,17 +2,18 @@
 
 O Elev8 Score é um app Next.js com servidor (páginas montadas no servidor e rotas de API). Na Hostinger isso roda como **Web App Node.js**, publicado direto do GitHub. A cada atualização no GitHub, a Hostinger publica de novo sozinha.
 
-## 1. Plano certo
+## 1. Plano
 
-O app precisa de um plano com **Web Apps (Node.js)**: Business, Cloud (Startup ou acima) ou o plano de hospedagem de Web Apps. Os planos Single e Premium de hospedagem comum **não** rodam Node.js.
+A Elev8 usa o plano **Business**, que roda Web Apps Node.js. (Single e Premium não rodam.) Confira no hPanel: em **Websites > Criar site** precisa aparecer a opção **Web App**.
 
-Se você já tem um plano, confira no hPanel: em **Websites > Criar site** precisa aparecer a opção **Web App**.
+Se o build falhar por falta de memória na Hostinger, o caminho é montar o app no GitHub (GitHub Actions) e mandar para a Hostinger já pronto. Só vale fazer isso se acontecer.
 
 ## 2. GitHub
 
 1. Crie uma conta no GitHub (se ainda não tiver).
-2. Crie um repositório **privado** e vazio, por exemplo `elev8-score`.
-3. Me passe só o nome do repositório. Eu envio o código.
+2. Crie um repositório **privado** e vazio, por exemplo `elev8-score` (sem README, sem .gitignore).
+3. Nas configurações do claude.ai, conecte a sua conta do GitHub, para o Claude conseguir enviar o código.
+4. Passe o nome no formato `usuario/elev8-score`. O código é enviado daqui.
 
 ## 3. Ligar a Hostinger ao GitHub
 
@@ -38,7 +39,7 @@ Sugestão: um subdomínio, como `score.seudominio.com.br`, apontado para o Web A
 
 - **Login no painel administrativo.** Hoje o `/admin` é protótipo com dados de exemplo e não tem senha. Ele ganha login na fase 2, antes de qualquer lead real entrar no banco.
 - **O app "dorme" sem visitas.** Na Hostinger, o processo para depois de um tempo sem tráfego, e a primeira visita seguinte demora alguns segundos a mais. Com anúncios rodando isso quase não acontece. Se incomodar, dá para usar um monitor gratuito que acessa o site a cada poucos minutos.
-- **Buscadores.** Só a página de entrada aparece no Google. `/painel` e `/admin` estão bloqueados (robots e cabeçalho `noindex`).
+- **Buscadores.** Enquanto for protótipo, nada aparece no Google (`src/app/robots.ts`). No lançamento, libera só a página de entrada; `/painel` e `/admin` continuam bloqueados (robots e cabeçalho `noindex`).
 
 ## Conferência antes de cada publicação
 
