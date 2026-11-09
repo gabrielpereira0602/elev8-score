@@ -17,7 +17,7 @@ export const ASSUNTOS_AVALIACAO = [
 export type AssuntoAvaliacao = (typeof ASSUNTOS_AVALIACAO)[number]["id"];
 
 export function respostaAvaliacao(ctx: Contexto, o: { nome: string; estrelas: number; assunto: AssuntoAvaliacao }): string {
-  const { empresa: e, segmento: s } = ctx;
+  const { segmento: s } = ctx;
   const nome = o.nome.trim() || "[nome]";
   if (o.estrelas >= 4) {
     const elogio: Record<AssuntoAvaliacao, string> = {
