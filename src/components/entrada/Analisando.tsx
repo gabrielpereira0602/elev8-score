@@ -6,11 +6,18 @@ import { Check, Loader2 } from "lucide-react";
 import type { Negocio } from "@/lib/busca-mock";
 import type { SegmentoId } from "@/lib/segmentos";
 
-const etapas = [
+const etapasDemo = [
   "Encontrando sua empresa no Google Maps",
   "Comparando com os 3 concorrentes",
   "Testando seu site no celular",
   "Perguntando ao ChatGPT e ao Gemini",
+  "Calculando seu Score Digital",
+];
+const etapasReais = [
+  "Encontrando sua empresa no Google Maps",
+  "Comparando com os concorrentes da mesma busca",
+  "Testando seu site no celular",
+  "Lendo seu site e as suas respostas",
   "Calculando seu Score Digital",
 ];
 
@@ -22,21 +29,63 @@ const pontos = [
   { x: 186, y: 170, voce: true },
 ];
 
-export function Analisando({ negocio, segmento }: { negocio: Negocio; segmento: SegmentoId }) {
+type Props = {
+  negocio: Negocio;
+  segmento: SegmentoId;
+  /** Diagnóstico real: devolve o endereço do painel. Sem ele, é o protótipo. */
+  pedido?: () => Promise<string>;
+  onVoltar?: () => void;
+};
+
+export function Analisando({ negocio, segmento, pedido, onVoltar }: Props) {
   const router = useRouter();
+  const etapas = pedido ? etapasReais : etapasDemo;
   const [feitas, setFeitas] = useState(0);
+  const [destino, setDestino] = useState<string | null>(pedido ? null : segmento === "estetica" ? "/painel" : `/painel?nicho=${segmento}`);
+  const [erro, setErro] = useState("");
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
-    // Protótipo: cada etapa leva ~1,3 s. Na fase 2, cada uma avança quando a coleta real termina.
-    const id = window.setInterval(() => setFeitas((f) => Math.min(f + 1, etapas.length)), 1300);
+    if (!pedido) return;
+    let vivo = true;
+    setErro("");
+    pedido()
+      .then((url) => vivo && setDestino(url))
+      .catch((e: Error) => vivo && setErro(e.message || "Não conseguimos terminar a análise agora."));
+    return () => {
+      vivo = false;
+    };
+  }, [pedido, tentativa]);
+
+  useEffect(() => {
+    // Avança uma etapa a cada ~1,3 s; a última só termina quando a análise real voltar.
+    const id = window.setInterval(() => setFeitas((f) => Math.min(f + 1, destino ? etapas.length : etapas.length - 1)), 1300);
     return () => window.clearInterval(id);
-  }, []);
+  }, [destino, etapas.length]);
 
   useEffect(() => {
-    if (feitas < etapas.length) return;
-    const t = window.setTimeout(() => router.push(segmento === "estetica" ? "/painel" : `/painel?nicho=${segmento}`), 700);
+    if (feitas < etapas.length || !destino) return;
+    const t = window.setTimeout(() => router.push(destino), 700);
     return () => window.clearTimeout(t);
-  }, [feitas, router, segmento]);
+  }, [feitas, destino, router, etapas.length]);
+
+  if (erro)
+    return (
+      <div className="flex flex-col items-center gap-4 rounded-[var(--radius-card)] bg-night p-6 text-center text-white md:p-8" role="alert">
+        <p className="font-display text-lg font-bold">Não deu para terminar agora</p>
+        <p className="max-w-sm text-sm text-white/70">{erro}</p>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => setTentativa((t) => t + 1)} className="rounded-[var(--radius-control)] bg-brand px-5 py-2.5 text-sm font-semibold text-white">
+            Tentar de novo
+          </button>
+          {onVoltar && (
+            <button type="button" onClick={onVoltar} className="rounded-[var(--radius-control)] border border-white/20 px-5 py-2.5 text-sm font-semibold text-white">
+              Voltar
+            </button>
+          )}
+        </div>
+      </div>
+    );
 
   const pontosVisiveis = Math.min(pontos.length, feitas + 1);
 

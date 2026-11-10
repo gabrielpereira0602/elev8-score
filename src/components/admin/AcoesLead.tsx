@@ -6,13 +6,18 @@ import { etapas, linkWhatsApp, type Etapa } from "@/lib/admin-mock";
 import { formatarBRL, servicos } from "@/lib/elev8";
 import { Card } from "../ui";
 
-type Props = { whatsapp: string; mensagem: string; etapaInicial: Etapa; desconto: number };
+type Props = { whatsapp: string; mensagem: string; etapaInicial: Etapa; desconto: number; idReal?: string; notasIniciais?: string };
+
+function salvar(id: string | undefined, patch: { etapa?: string; notas?: string }) {
+  if (!id) return;
+  fetch("/api/admin/lead", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...patch }) }).catch(() => {});
+}
 
 /** Ações da ficha. Protótipo: o estado fica na tela; na fase 2, cada mudança é salva no lead. */
-export function AcoesLead({ whatsapp, mensagem, etapaInicial, desconto }: Props) {
+export function AcoesLead({ whatsapp, mensagem, etapaInicial, desconto, idReal, notasIniciais = "" }: Props) {
   const [etapa, setEtapa] = useState<Etapa>(etapaInicial);
   const [texto, setTexto] = useState(mensagem);
-  const [nota, setNota] = useState("");
+  const [nota, setNota] = useState(notasIniciais);
   const [servicoId, setServicoId] = useState("lp-estrategica");
   const [resultado, setResultado] = useState<"ganho" | "perdido" | null>(etapaInicial === "cliente" ? "ganho" : etapaInicial === "perdido" ? "perdido" : null);
   const s = servicos.find((x) => x.id === servicoId)!;
@@ -49,7 +54,10 @@ export function AcoesLead({ whatsapp, mensagem, etapaInicial, desconto }: Props)
           id="lead-etapa"
           aria-label="Etapa do lead"
           value={etapa}
-          onChange={(e) => setEtapa(e.target.value as Etapa)}
+          onChange={(e) => {
+            setEtapa(e.target.value as Etapa);
+            salvar(idReal, { etapa: e.target.value });
+          }}
           className="w-full min-w-0 rounded-[8px] border border-line bg-surface px-3 py-2.5 text-sm"
         >
           {etapas.map((e) => (
@@ -63,6 +71,7 @@ export function AcoesLead({ whatsapp, mensagem, etapaInicial, desconto }: Props)
           aria-label="Anotação"
           value={nota}
           onChange={(e) => setNota(e.target.value)}
+          onBlur={() => salvar(idReal, { notas: nota })}
           rows={3}
           placeholder="Ex.: prefere falar depois das 18h; sócio decide junto."
           className="w-full resize-y rounded-[var(--radius-control)] border border-line bg-surface px-3 py-2.5 text-sm outline-none focus:border-brand"
@@ -100,10 +109,16 @@ export function AcoesLead({ whatsapp, mensagem, etapaInicial, desconto }: Props)
                 : "Serviço sob consulta: registre o valor combinado na proposta."}
             </p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setResultado("ganho")} className="flex-1 rounded-[var(--radius-control)] bg-ink px-3 py-2.5 text-sm font-semibold text-white">
+              <button type="button" onClick={() => {
+                setResultado("ganho");
+                salvar(idReal, { etapa: "cliente" });
+              }} className="flex-1 rounded-[var(--radius-control)] bg-ink px-3 py-2.5 text-sm font-semibold text-white">
                 Fechou
               </button>
-              <button type="button" onClick={() => setResultado("perdido")} className="flex-1 rounded-[var(--radius-control)] border border-line px-3 py-2.5 text-sm font-semibold">
+              <button type="button" onClick={() => {
+                setResultado("perdido");
+                salvar(idReal, { etapa: "perdido" });
+              }} className="flex-1 rounded-[var(--radius-control)] border border-line px-3 py-2.5 text-sm font-semibold">
                 Perdido
               </button>
             </div>

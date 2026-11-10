@@ -20,11 +20,14 @@ type Props = {
   nicho: string;
   empresa: string;
   cidade: string;
+  /** Código do diagnóstico real. Sem ele, é o protótipo (com a barra de demonstração). */
+  codigo?: string;
   children: React.ReactNode;
 };
 
 /** Monta a query que mantém versão (grátis/paga) e nicho ao navegar entre as abas. */
-export function montarQs(pago: boolean, nicho: string) {
+export function montarQs(pago: boolean, nicho: string, codigo?: string) {
+  if (codigo) return `?d=${codigo}`;
   const p = new URLSearchParams();
   if (pago) p.set("plano", "pago");
   if (nicho && nicho !== "estetica") p.set("nicho", nicho);
@@ -32,8 +35,8 @@ export function montarQs(pago: boolean, nicho: string) {
   return q ? `?${q}` : "";
 }
 
-export function AppShell({ ativa, pago, nicho, empresa, cidade, children }: Props) {
-  const sufixo = montarQs(pago, nicho);
+export function AppShell({ ativa, pago, nicho, empresa, cidade, codigo, children }: Props) {
+  const sufixo = montarQs(pago, nicho, codigo);
 
   return (
     <div className="min-h-dvh pb-[calc(76px+env(safe-area-inset-bottom))] md:pb-0">
@@ -77,7 +80,7 @@ export function AppShell({ ativa, pago, nicho, empresa, cidade, children }: Prop
         </nav>
       </header>
 
-      <BarraPrototipo pago={pago} nicho={nicho} />
+      {!codigo && <BarraPrototipo pago={pago} nicho={nicho} />}
       <main className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8">{children}</main>
 
       <nav

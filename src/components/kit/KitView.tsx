@@ -11,6 +11,8 @@ import { Plaquinha } from "./Plaquinha";
 import { PostArt } from "./PostArt";
 import { gerarPosts } from "@/lib/posts";
 import { formatarBRL, formatarData, servico } from "@/lib/elev8";
+import type { FormKit as FormKitDados } from "@/lib/real/analise";
+import { FormKit } from "./FormKit";
 
 
 /** O serviço da Elev8 que resolve cada peça. Aparece no momento em que o empresário vê o trabalho que dá. */
@@ -27,7 +29,7 @@ function precoAPartir(id: string) {
   return s.preco === undefined ? "orçamento sob consulta" : `a partir de ${formatarBRL(s.preco)}${s.cobranca === "mensal" ? "/mês" : ""}`;
 }
 
-export function KitView({ empresa, segmento, kit, qs, diasDesdeCompra }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string; diasDesdeCompra: number }) {
+export function KitView({ empresa, segmento, kit, qs, diasDesdeCompra, codigo, formKit }: { empresa: EmpresaDemo; segmento: Segmento; kit: Kit; qs: string; diasDesdeCompra: number; codigo?: string; formKit?: FormKitDados }) {
   const pecas = kit.pecas;
   const [ativa, setAtiva] = useState<Peca["id"]>("avaliacoes");
   const [feitas, setFeitas] = useState<Set<Peca["id"]>>(new Set());
@@ -54,6 +56,8 @@ export function KitView({ empresa, segmento, kit, qs, diasDesdeCompra }: { empre
           <b className="tabular font-semibold text-ink">{feitas.size} de {pecas.length}</b> peças aplicadas
         </p>
       </div>
+
+      {codigo && <FormKit codigo={codigo} permitePreco={segmento.permitePreco} inicial={formKit} exemploServico="o serviço que você mais vende" />}
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
         <nav aria-label="Peças do kit" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">

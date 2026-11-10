@@ -5,6 +5,9 @@ import { Card } from "@/components/ui";
 import { linkWhatsApp } from "@/lib/admin-mock";
 import { segmentos } from "@/lib/segmentos";
 import { STATUS_PROSPECTO, numerosCiclo, prospectos } from "@/lib/prospeccao";
+import { carregarLeads, prospectosReais } from "@/lib/real/leads";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Prospecção · Admin · Elev8 Score" };
 
@@ -15,7 +18,9 @@ const tons = {
   muted: "bg-subtle text-muted",
 };
 
-export default function Prospeccao() {
+export default async function Prospeccao() {
+  const { real, registros, leads } = await carregarLeads();
+  if (real) return <ProspeccaoReal registros={registros} leads={leads} />;
   const lista = prospectos();
   const n = numerosCiclo();
   const fator = n.fator.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
@@ -124,6 +129,83 @@ export default function Prospeccao() {
         <p className="text-xs text-faint">
           Protótipo: lista e status de exemplo. Na fase 2, os concorrentes vêm da busca real no Google e os e-mails públicos, do site de cada empresa.
         </p>
+      </div>
+    </AdminShell>
+  );
+}
+
+function ProspeccaoReal({ registros, leads }: { registros: Awaited<ReturnType<typeof carregarLeads>>["registros"]; leads: Awaited<ReturnType<typeof carregarLeads>>["leads"] }) {
+  const lista = prospectosReais(registros);
+  const deConvite = leads.filter((l) => l.origem === "prospeccao").length;
+  const outros = leads.length - deConvite;
+  const fator = (outros ? deConvite / outros : 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+  return (
+    <AdminShell ativa="prospeccao" real>
+      <div className="flex flex-col gap-5">
+        <div>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Ciclo do concorrente</h1>
+          <p className="mt-1 max-w-3xl text-sm text-muted">
+            Concorrentes que apareceram nos diagnósticos reais. Por enquanto o convite é pelo WhatsApp, em um clique; o envio automático por e-mail entra
+            junto com o domínio de e-mail.
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            ["Empresas encontradas", String(lista.length)],
+            ["Viraram diagnóstico", String(deConvite)],
+            ["Fator do ciclo", fator],
+          ].map(([k, v]) => (
+            <Card key={k} className="p-4 md:p-5">
+              <p className="text-[13px] font-medium text-muted">{k}</p>
+              <p className="tabular mt-1 font-display text-3xl font-extrabold tracking-tight">{v}</p>
+            </Card>
+          ))}
+        </div>
+        <Card className="overflow-hidden">
+          {lista.length === 0 ? (
+            <p className="p-5 text-sm text-muted">Ainda não há concorrentes. Eles aparecem aqui a cada diagnóstico feito.</p>
+          ) : (
+            <ul className="divide-y divide-line">
+              {lista.map((p) => (
+                <li key={p.codigo} className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+                  <div className="min-w-0">
+                    <p className="font-semibold">{p.nome}</p>
+                    <p className="text-[13px] text-muted">
+                      {segmentos[p.segmento]?.nome ?? "Negócio"} · {p.cidade} · {p.posicao}º em “{p.busca}” · Score {p.nota}
+                    </p>
+                    <p className="text-xs text-faint">Apareceu no diagnóstico de {p.veioDe}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {p.virouLead ? (
+                      <span className="rounded-full bg-good-soft px-2.5 py-0.5 text-xs font-semibold text-good">Fez o diagnóstico</span>
+                    ) : p.telefone ? (
+                      <a
+                        href={linkWhatsApp(
+                          p.telefone.replace(/\D/g, ""),
+                          `Olá, equipe ${p.nome}! Aqui é o Gabriel, da Elev8. Analisamos a busca “${p.busca}” no Google e vocês aparecem em ${p.posicao}º. Posso mandar o Score Digital de vocês? É gratuito.`,
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-[8px] bg-good px-2.5 py-1.5 text-[13px] font-semibold text-white hover:brightness-110"
+                      >
+                        <MessageCircle size={13} aria-hidden />
+                        Convidar no WhatsApp
+                      </a>
+                    ) : (
+                      <span className="rounded-full bg-subtle px-2.5 py-0.5 text-xs font-semibold text-muted">Sem telefone público</span>
+                    )}
+                    {p.site && (
+                      <a href={p.site} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-[8px] border border-line px-2.5 py-1.5 text-[13px] font-semibold hover:border-brand">
+                        Site
+                        <ExternalLink size={13} aria-hidden />
+                      </a>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       </div>
     </AdminShell>
   );

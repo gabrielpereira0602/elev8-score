@@ -2,12 +2,16 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { Fila } from "@/components/admin/Fila";
 import { ListaLeads } from "@/components/admin/ListaLeads";
 import { Card } from "@/components/ui";
-import { filaDeHoje, leads, numeros } from "@/lib/admin-mock";
+import { filaDeHoje, numeros } from "@/lib/admin-mock";
+import { carregarLeads } from "@/lib/real/leads";
+
+export const dynamic = "force-dynamic";
 import { formatarBRL } from "@/lib/elev8";
 
 export const metadata = { title: "Admin · Elev8 Score" };
 
-export default function Admin() {
+export default async function Admin() {
+  const { leads, real } = await carregarLeads();
   const n = numeros(leads);
   const fila = filaDeHoje(leads);
   const pct = (a: number, b: number) => (b === 0 ? 0 : Math.round((a / b) * 100));
@@ -28,7 +32,7 @@ export default function Admin() {
   ];
 
   return (
-    <AdminShell>
+    <AdminShell real={real}>
       <div className="flex flex-col gap-5">
         <div>
           <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">Visão geral</h1>

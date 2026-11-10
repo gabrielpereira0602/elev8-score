@@ -8,12 +8,13 @@ import { Offer } from "@/components/Offer";
 import { PlanProgress } from "@/components/BottomStrip";
 import { StickyCTA } from "@/components/StickyCTA";
 import { kitItens } from "@/lib/mock";
-import { contexto } from "@/lib/contexto";
+import { carregarPainel, type BuscaPainel } from "@/lib/real/carregar";
+import { AvisoPagamento } from "@/components/AvisoPagamento";
 import { ConsultorCard } from "@/components/ConsultorCard";
 import { ScoreVivo } from "@/components/ScoreVivo";
 import { acessoAte } from "@/lib/elev8";
 
-type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
+type Props = { searchParams: Promise<BuscaPainel> };
 
 /*
   Ordem da versão grátis (valor antes do preço):
@@ -23,13 +24,12 @@ type Props = { searchParams: Promise<{ plano?: string; nicho?: string }> };
 */
 export default async function VisaoGeral({ searchParams }: Props) {
   const sp = await searchParams;
-  const pago = sp.plano === "pago";
-  const ctx = contexto(sp.nicho);
+  const { ctx, pago, nicho, codigo, aviso } = await carregarPainel(sp);
   const d = ctx.diagnostico;
-  const nicho = ctx.empresa.segmento;
 
   return (
-    <AppShell ativa="visao-geral" pago={pago} nicho={nicho} empresa={d.empresa} cidade={d.cidade}>
+    <AppShell ativa="visao-geral" pago={pago} nicho={nicho} empresa={d.empresa} cidade={d.cidade} codigo={codigo}>
+      <AvisoPagamento aviso={aviso} pago={pago} />
       <div className="flex flex-col gap-4 md:gap-5">
         <div>
           <h1 className="font-display text-2xl font-extrabold tracking-tight md:text-[28px]">
@@ -49,7 +49,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
 
         {pago && (
           <ConsultorCard
-            qs={montarQs(true, nicho)}
+            qs={montarQs(true, nicho, codigo)}
             ativoAte={acessoAte(new Date(new Date(d.dataISO).getTime() - (30 - d.plano.diasParaReavaliacao) * 864e5))}
             perguntas={["O que eu faço primeiro esta semana?", ctx.segmento.consultor.pergunta]}
           />
@@ -84,7 +84,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
               ranking={d.ranking}
               itens={kitItens}
               bioPrevia={ctx.kit.bios[0].texto}
-              hrefLiberar={montarQs(true, nicho)}
+              hrefLiberar={codigo ? `/api/pagamento?d=${codigo}` : montarQs(true, nicho)}
               consultor={{ pergunta: ctx.segmento.consultor.pergunta, setor: ctx.segmento.nome.toLowerCase() }}
             />
           </div>

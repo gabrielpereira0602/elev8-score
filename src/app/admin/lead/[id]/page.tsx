@@ -5,7 +5,8 @@ import { AdminShell, TempBadge } from "@/components/admin/AdminShell";
 import { AcoesLead } from "@/components/admin/AcoesLead";
 import { CopyButton } from "@/components/CopyButton";
 import { Card, StatusBadge } from "@/components/ui";
-import { ORIGENS, etapas, filaDeHoje, leads, temperatura } from "@/lib/admin-mock";
+import { ORIGENS, etapas, filaDeHoje, temperatura } from "@/lib/admin-mock";
+import { carregarLeads } from "@/lib/real/leads";
 import { parceiroPorCodigo } from "@/lib/parceiros";
 import { descontoAtivo } from "@/lib/elev8";
 import { faixaScore } from "@/lib/mock";
@@ -15,7 +16,9 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function FichaLead({ params }: Props) {
   const { id } = await params;
+  const { leads, real, registros } = await carregarLeads();
   const l = leads.find((x) => x.id === id);
+  const reg = registros.find((x) => x.id === id);
   if (!l) notFound();
 
   const s = segmentos[l.segmento];
@@ -28,7 +31,7 @@ export default async function FichaLead({ params }: Props) {
   const fone = l.whatsapp.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
 
   return (
-    <AdminShell>
+    <AdminShell real={real}>
       <div className="flex flex-col gap-5">
         <Link href="/admin" className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-muted hover:text-ink">
           <ArrowLeft size={15} aria-hidden />
@@ -133,7 +136,7 @@ export default async function FichaLead({ params }: Props) {
             </div>
           </div>
 
-          <AcoesLead whatsapp={l.whatsapp} mensagem={mensagem} etapaInicial={l.etapa} desconto={desconto?.percentual ?? 0} />
+          <AcoesLead whatsapp={l.whatsapp} mensagem={mensagem} etapaInicial={l.etapa} desconto={desconto?.percentual ?? 0} idReal={real ? l.id : undefined} notasIniciais={reg?.notas ?? ""} />
         </div>
       </div>
     </AdminShell>

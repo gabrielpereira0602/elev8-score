@@ -11,7 +11,7 @@ const abasAdmin: { id: AbaAdmin; nome: string; href: string }[] = [
   { id: "parceiros", nome: "Parceiros", href: "/admin/parceiros" },
 ];
 
-export function AdminShell({ children, ativa = "leads" }: { children: React.ReactNode; ativa?: AbaAdmin }) {
+export function AdminShell({ children, ativa = "leads", real = false }: { children: React.ReactNode; ativa?: AbaAdmin; real?: boolean }) {
   return (
     <div className="min-h-dvh">
       <header className="bg-night text-white">
@@ -42,12 +42,26 @@ export function AdminShell({ children, ativa = "leads" }: { children: React.Reac
           ))}
         </nav>
       </header>
-      <div className="border-b border-warn/30 bg-warn-soft/60">
-        <p className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 text-[12.5px] text-warn md:px-8">
-          <ShieldCheck size={14} aria-hidden />
-          <b className="font-bold uppercase tracking-wider">Protótipo</b> Dados de exemplo e sem login. Na versão final, só você entra, com e-mail e senha.
-        </p>
-      </div>
+      {real ? (
+        <div className="border-b border-line bg-surface">
+          <form action="/api/admin/sair" method="post" className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2 text-[12.5px] text-muted md:px-8">
+            <span className="flex items-center gap-2">
+              <ShieldCheck size={14} className="text-good" aria-hidden />
+              Dados reais · acesso só seu
+            </span>
+            <button type="submit" className="font-semibold hover:text-ink">
+              Sair
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div className="border-b border-warn/30 bg-warn-soft/60">
+          <p className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 text-[12.5px] text-warn md:px-8">
+            <ShieldCheck size={14} aria-hidden />
+            <b className="font-bold uppercase tracking-wider">Protótipo</b> Dados de exemplo. Com o banco configurado, aparecem os leads reais e o admin pede senha.
+          </p>
+        </div>
+      )}
       <main className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">{children}</main>
     </div>
   );

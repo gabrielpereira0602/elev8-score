@@ -26,24 +26,27 @@ function montarAcoes(s: Segmento): Acao[] {
   ];
 }
 
-type Props = { segmento: Segmento; qs: string; diasParaReavaliacao: number };
+type Props = { segmento: Segmento; qs: string; diasParaReavaliacao: number; codigo?: string; feitasIniciais?: string[] };
 
-export function Plano({ segmento, qs, diasParaReavaliacao }: Props) {
+export function Plano({ segmento, qs, diasParaReavaliacao, codigo, feitasIniciais }: Props) {
   const acoes = montarAcoes(segmento);
-  // Protótipo: começa com as 2 primeiras feitas. Na fase 2, o estado fica salvo no Supabase.
-  const [feitas, setFeitas] = useState<Set<string>>(new Set(["a1", "a2"]));
+  // Real: estado salvo no banco (conta para a garantia). Protótipo: começa com as 2 primeiras feitas.
+  const [feitas, setFeitas] = useState<Set<string>>(new Set(codigo ? (feitasIniciais ?? []) : ["a1", "a2"]));
   const total = acoes.length;
   const pct = Math.round((feitas.size / total) * 100);
   const proxima = acoes.find((a) => !feitas.has(a.id));
   const semanaAtual = proxima?.semana ?? 4;
 
   function alternar(id: string) {
+    const feita = !feitas.has(id);
     setFeitas((f) => {
       const n = new Set(f);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
+      if (feita) n.add(id);
+      else n.delete(id);
       return n;
     });
+    if (codigo)
+      fetch("/api/plano", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ d: codigo, acao: id, feita }) }).catch(() => {});
   }
 
   return (

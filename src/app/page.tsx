@@ -1,12 +1,15 @@
 import Image from "next/image";
-import { ScanSearch, ShieldCheck, Sparkles, Trophy, Gift } from "lucide-react";
+import { MapPin, ScanSearch, ShieldCheck, Sparkles, Trophy, Gift } from "lucide-react";
 import { Entrada } from "@/components/entrada/Entrada";
 import { negocioDoConvite } from "@/lib/prospeccao";
 import { parceiroPorCodigo } from "@/lib/parceiros";
+import { googleConfigurado } from "@/lib/real/google";
+import { bancoConfigurado } from "@/lib/real/db";
 
 const gratis = [
   { icone: Trophy, titulo: "Seu Score Digital", texto: "A nota de 0 a 100 da sua empresa, ao lado dos 3 concorrentes mais próximos." },
-  { icone: Sparkles, titulo: "O teste das IAs", texto: "Se o ChatGPT e o Gemini indicam você quando alguém pede uma recomendação." },
+  { icone: Sparkles, titulo: "O teste das IAs", texto: "Se o ChatGPT e o Gemini indicam você quando alguém pede uma recomendação.", soDemo: true },
+  { icone: MapPin, titulo: "Sua posição no Google", texto: "Em que lugar você aparece quando procuram o que você faz na sua cidade.", soReal: true },
   { icone: ScanSearch, titulo: "Onde você perde clientes", texto: "Em que etapa o cliente deixa de te encontrar, entender ou escolher." },
   { icone: Gift, titulo: "Uma ação de presente", texto: "A primeira peça do kit pronta para usar hoje mesmo." },
 ];
@@ -15,7 +18,9 @@ type Props = { searchParams: Promise<{ convite?: string; parceiro?: string }> };
 
 export default async function Inicio({ searchParams }: Props) {
   const sp = await searchParams;
-  const convite = typeof sp.convite === "string" ? negocioDoConvite(sp.convite) : null;
+  const real = googleConfigurado() && bancoConfigurado();
+  // Convites de exemplo só no protótipo. No modo real, o convite chega com a empresa já escolhida (fase seguinte).
+  const convite = !real && typeof sp.convite === "string" ? negocioDoConvite(sp.convite) : null;
   const p = parceiroPorCodigo(typeof sp.parceiro === "string" ? sp.parceiro : undefined);
   return (
     <div className="min-h-dvh">
@@ -46,7 +51,7 @@ export default async function Inicio({ searchParams }: Props) {
 
       <main className="mx-auto -mt-32 max-w-6xl px-4 pb-16 md:-mt-36 md:px-8">
         <div className="mx-auto max-w-xl">
-          <Entrada inicial={convite ?? undefined} parceiro={p ? { codigo: p.codigo, nome: p.nome } : undefined} />
+          <Entrada inicial={convite ?? undefined} parceiro={p ? { codigo: p.codigo, nome: p.nome } : undefined} real={real} />
           <p className="mt-4 flex items-center justify-center gap-2 text-center text-[13px] text-muted">
             <ShieldCheck size={15} className="shrink-0 text-good" aria-hidden />
             Usamos apenas dados públicos do Google e das redes. Não pedimos senha de nada.
@@ -58,7 +63,7 @@ export default async function Inicio({ searchParams }: Props) {
             O que você recebe de graça
           </h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-            {gratis.map((g) => (
+            {gratis.filter((g) => (real ? !("soDemo" in g) : !("soReal" in g))).map((g) => (
               <li key={g.titulo} className="flex gap-4 rounded-[var(--radius-card)] border border-line bg-surface p-5">
                 <span className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-brand-soft text-brand">
                   <g.icone size={20} aria-hidden />

@@ -25,11 +25,23 @@ Se o build falhar por falta de memória na Hostinger, o caminho é montar o app 
    - Comando de build: `npm run build`
 4. **Deploy**. Quando terminar, a Hostinger mostra uma prévia do site.
 
-## 4. Chaves (variáveis de ambiente)
+## 4. Ligar a versão real (variáveis de ambiente)
 
-Os nomes estão no arquivo `.env.example`. Os valores entram **só** no painel da Hostinger, em Variáveis de ambiente do app. Nunca cole chave no chat, no GitHub ou em print.
+Sem chaves, o site roda como protótipo (empresas de exemplo). Com as chaves abaixo, ele busca qualquer empresa no Google, salva os leads, cobra e libera o kit sozinho. Os nomes estão em `.env.example`; os valores entram **só** na Hostinger.
 
-Elas entram aos poucos: Supabase e Google na fase 2, IA na fase 3, Mercado Pago e Resend na fase 4.
+| Variável | De onde vem |
+|---|---|
+| `ADMIN_PASSWORD` | Uma senha forte criada por você. Protege o `/admin`. |
+| `GOOGLE_PLACES_API_KEY` | Google Cloud > APIs e serviços > Credenciais (com Places API (New) e PageSpeed Insights API ativadas) |
+| `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API |
+| `MERCADOPAGO_ACCESS_TOKEN` | Mercado Pago Developers > Suas integrações > Credenciais de produção |
+| `SITE_URL` (opcional) | O endereço final do site, sem barra no fim |
+
+**Banco de dados (uma vez só):** no Supabase, abra **SQL Editor > New query**, cole o conteúdo de `supabase/schema.sql` e clique em **Run**.
+
+**Mercado Pago:** o aviso automático de pagamento é configurado sozinho em cada compra (vai para `/api/webhooks/mercadopago`). Não precisa cadastrar nada no painel do Mercado Pago.
+
+Depois de salvar as variáveis, faça um novo deploy na Hostinger para o app ler as chaves.
 
 ## 5. Domínio
 
@@ -37,7 +49,7 @@ Sugestão: um subdomínio, como `score.seudominio.com.br`, apontado para o Web A
 
 ## Antes de receber leads de verdade
 
-- **Login no painel administrativo.** Hoje o `/admin` é protótipo com dados de exemplo e não tem senha. Ele ganha login na fase 2, antes de qualquer lead real entrar no banco.
+- **Login no painel administrativo.** Com o banco ligado, o `/admin` só abre com a senha de `ADMIN_PASSWORD`. Sem senha configurada, ele fica bloqueado (nunca aberto com leads reais).
 - **O app "dorme" sem visitas.** Na Hostinger, o processo para depois de um tempo sem tráfego, e a primeira visita seguinte demora alguns segundos a mais. Com anúncios rodando isso quase não acontece. Se incomodar, dá para usar um monitor gratuito que acessa o site a cada poucos minutos.
 - **Buscadores.** Enquanto for protótipo, nada aparece no Google (`src/app/robots.ts`). No lançamento, libera só a página de entrada; `/painel` e `/admin` continuam bloqueados (robots e cabeçalho `noindex`).
 

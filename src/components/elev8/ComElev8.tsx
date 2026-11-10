@@ -16,7 +16,7 @@ type Props = {
 const orcamentos = ["Até R$ 1.000", "De R$ 1.000 a R$ 3.000", "Acima de R$ 3.000", "Ainda não sei"];
 const prazos = ["Quero começar agora", "No próximo mês", "Só estou pesquisando"];
 
-export function ComElev8({ empresa, recomendacoes, pago, desconto }: Props) {
+export function ComElev8({ empresa, recomendacoes, pago, desconto, codigo }: Props & { codigo?: string }) {
   const [principal, ...outras] = recomendacoes;
   const [escolhidas, setEscolhidas] = useState<Set<string>>(new Set([principal.id]));
   const [orcamento, setOrcamento] = useState("");
@@ -40,6 +40,13 @@ export function ComElev8({ empresa, recomendacoes, pago, desconto }: Props) {
     e.preventDefault();
     if (escolhidas.size === 0) return setErro("Escolha pelo menos um item para a proposta.");
     if (!orcamento || !prazo) return setErro("Responda as duas perguntas para a proposta vir no tamanho certo.");
+    if (codigo) {
+      const nomes = recomendacoes.filter((r) => escolhidas.has(r.id)).map((r) => r.servico);
+      fetch("/api/proposta", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ d: codigo, resolver: nomes, orcamento, prazo }) })
+        .then((r) => (r.ok ? setEnviado(true) : setErro("Não conseguimos enviar agora. Tente de novo em instantes.")))
+        .catch(() => setErro("Sem conexão. Tente de novo em instantes."));
+      return;
+    }
     setEnviado(true);
   }
 
