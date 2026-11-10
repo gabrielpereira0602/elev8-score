@@ -10,7 +10,6 @@
   A IA só pode afirmar números que estão na parte 3. O resto é orientação.
 */
 import type { Contexto } from "./contexto";
-import { liderBusca, metricasHoje } from "./mock";
 import { maiorPerda, mesSP } from "./consultor-util";
 import { REGRA, formatarData } from "./elev8";
 
@@ -31,7 +30,8 @@ export function promptDoConsultor({ ctx, hoje = new Date(), acoesFeitas = 0, des
   const proximo = (mes % 12) + 1;
   const datas = s.consultor.datas.filter((x) => x.mes === mes || x.mes === proximo);
   const perda = maiorPerda(d.etapas);
-  const m = metricasHoje;
+  const m = d.metricas;
+  const liderBusca = d.lider;
 
   return `# Quem você é
 Você é o consultor de marketing do Elev8 Score, da agência Elev8. Pense como um estrategista de marketing sênior, com muitos anos atendendo negócios locais no Brasil (${s.nome.toLowerCase()} incluído). Você fala com o dono do negócio, que é ocupado e não é do marketing.
@@ -79,7 +79,7 @@ ${s.regras.map((r) => `   - ${r}`).join("\n")}
 - Score Digital: ${d.nota} de 100 (${d.etapas.map((x) => `${x.nome}: ${x.nota}, 1º colocado ${x.lider}`).join("; ")}). Onde mais perde: ${perda.nome}.
 - Com o kit inteiro aplicado, estimativa de ${d.potencialComKit} (fórmula do Score; é estimativa).
 - Ranking: ${d.ranking.map((r, i) => `${i + 1}º ${r.nome} (${r.nota})${r.voce ? " ← este negócio" : ""}`).join(", ")}.
-- Números medidos: ${m.avaliacoes} avaliações no Google (1º colocado: ${liderBusca.avaliacoes}), nota média ${m.estrelas.toLocaleString("pt-BR")}, ${m.fotos} fotos (1º colocado: ${liderBusca.fotos}), perfil do Google ${m.perfilPreenchido}% preenchido, ${m.respostasAvaliacoes}% das avaliações respondidas, ${m.postsPorSemana} posts por semana, velocidade do site no celular ${m.velocidadeSite}/100, bio ${m.bioClara ? "clara" : "pouco clara"}.
+- Números medidos: ${m.avaliacoes} avaliações no Google (1º colocado: ${liderBusca.avaliacoes}), nota média ${m.estrelas === null ? "sem nota ainda" : m.estrelas.toLocaleString("pt-BR")}, ${m.fotos} fotos (1º colocado: ${liderBusca.fotos}), perfil do Google ${m.perfilPreenchido}% preenchido, ${m.respostasAvaliacoes === null ? "respostas às avaliações não informadas" : `${m.respostasAvaliacoes}% das avaliações respondidas`}, ${m.postsPorSemana === null ? "frequência de posts não informada" : `${m.postsPorSemana} posts por semana`}, ${m.velocidadeSite === null ? "sem site medido" : `velocidade do site no celular ${m.velocidadeSite}/100`}, bio ${m.bioClara === null ? "não informada" : m.bioClara ? "clara" : "pouco clara"}.
 - Kit entregue: ${ctx.kit.pecas.map((p) => p.nome).join(", ")}, 12 posts para 4 semanas. Quando a resposta estiver no kit, diga em qual peça.
 - Plano de 30 dias: ${acoesFeitas} de 12 ações feitas. Reavaliação no dia 30.
 - Hoje: ${formatarData(hoje)}. Datas do setor neste mês e no próximo (${MESES[mes - 1]} e ${MESES[proximo - 1]}): ${datas.length ? datas.map((x) => `${x.nome} (${x.ideia})`).join("; ") : "nenhuma data forte"}.`;

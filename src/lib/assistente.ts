@@ -7,7 +7,7 @@
   Sem tema com pontuação suficiente, diz que não encontrou e sugere os temas mais próximos, em vez de inventar.
 */
 import type { Contexto } from "./contexto";
-import { TEMAS, type Resposta, type Tema } from "./consultor-base";
+import { TEMAS, usarMetricas, type Resposta, type Tema } from "./consultor-base";
 import { ETAPA_FRASE, MESES, maiorPerda, mesSP, normalizar } from "./consultor-util";
 
 export type { Resposta } from "./consultor-base";
@@ -106,6 +106,7 @@ export function responder(pergunta: string, ctx: Contexto, hoje = new Date()): R
       relacionados: POPULARES.map((id) => TEMAS.find((t) => t.id === id)!).map((t) => ({ id: t.id, titulo: t.titulo })),
     };
   }
+  usarMetricas(ctx);
   const r = melhor.tema.resposta(ctx, hoje, normalizar(pergunta));
   return { ...r, temaId: melhor.tema.id, relacionados: relacionados(ranking, melhor.tema) };
 }

@@ -11,12 +11,14 @@ export type Metricas = {
   avaliacoes: number;
   fotos: number;
   perfilPreenchido: number; // 0–100
-  velocidadeSite: number; // 0–100 (PageSpeed no celular)
-  bioClara: boolean;
-  postsPorSemana: number;
-  respostasAvaliacoes: number; // % de avaliações respondidas
-  estrelas: number; // 1–5
-  siteClaro: number; // 0–100: o site diz o que faz, para quem e como contratar
+  // Os campos abaixo podem não estar medidos (null): sem site, empresa sem avaliações, pergunta não respondida.
+  // Medida que falta não vira zero nem número inventado: o peso dela se divide entre as que existem.
+  velocidadeSite: number | null; // 0–100 (PageSpeed no celular)
+  bioClara: boolean | null; // informado pelo dono
+  postsPorSemana: number | null; // informado pelo dono
+  respostasAvaliacoes: number | null; // % de avaliações respondidas (informado pelo dono)
+  estrelas: number | null; // 1–5
+  siteClaro: number | null; // 0–100: o site diz o que faz, para quem e como contratar
 };
 
 export type Lider = { avaliacoes: number; fotos: number };
@@ -28,20 +30,29 @@ const limitar = (n: number) => Math.max(0, Math.min(1, n));
 const REFERENCIA = { avaliacoes: 100, fotos: 50 };
 const relativo = (x: number, lider: number, referencia: number) => Math.sqrt(limitar(x / (lider > 0 ? lider : referencia)));
 
+/** Média ponderada só com as medidas que existem. */
+function media(partes: [number, number | null][]): number {
+  const validas = partes.filter(([, v]) => v !== null) as [number, number][];
+  const peso = validas.reduce((t, [p]) => t + p, 0);
+  return peso === 0 ? 0 : validas.reduce((t, [p, v]) => t + p * v, 0) / peso;
+}
+
+const ou = <T,>(v: T | null, f: (x: T) => number) => (v === null ? null : f(v));
+
 export function calcularScore(m: Metricas, lider: Lider): Resultado {
   const r = relativo(m.avaliacoes, lider.avaliacoes, REFERENCIA.avaliacoes);
   const f = relativo(m.fotos, lider.fotos, REFERENCIA.fotos);
   const p = limitar(m.perfilPreenchido / 100);
-  const v = limitar(m.velocidadeSite / 100);
-  const b = m.bioClara ? 1 : 0;
-  const pst = limitar(m.postsPorSemana / 3);
-  const resp = limitar(m.respostasAvaliacoes / 100);
-  const est = limitar(m.estrelas - 4); // 4,0 → 0 · 5,0 → 1
-  const site = limitar(m.siteClaro / 100);
+  const v = ou(m.velocidadeSite, (x) => limitar(x / 100));
+  const b = ou(m.bioClara, (x) => (x ? 1 : 0));
+  const pst = ou(m.postsPorSemana, (x) => limitar(x / 3));
+  const resp = ou(m.respostasAvaliacoes, (x) => limitar(x / 100));
+  const est = ou(m.estrelas, (x) => limitar(x - 4)); // 4,0 → 0 · 5,0 → 1
+  const site = ou(m.siteClaro, (x) => limitar(x / 100));
 
-  const encontrado = 100 * (0.45 * r + 0.35 * p + 0.2 * v);
-  const entendido = 100 * (0.35 * b + 0.25 * p + 0.2 * pst + 0.2 * site);
-  const escolhido = 100 * (0.4 * r + 0.25 * f + 0.2 * est + 0.15 * resp);
+  const encontrado = 100 * media([[0.45, r], [0.35, p], [0.2, v]]);
+  const entendido = 100 * media([[0.35, b], [0.25, p], [0.2, pst], [0.2, site]]);
+  const escolhido = 100 * media([[0.4, r], [0.25, f], [0.2, est], [0.15, resp]]);
   const total = 0.4 * encontrado + 0.3 * entendido + 0.3 * escolhido;
 
   return {

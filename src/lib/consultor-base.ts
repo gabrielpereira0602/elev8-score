@@ -10,6 +10,7 @@
 */
 import type { Contexto } from "./contexto";
 import { liderBusca, metricasHoje } from "./mock";
+import type { Lider, Metricas } from "./score";
 import { ETAPA_FRASE, MESES, lembreteSetor, maiorPerda, maiuscula, mesSP, minuscula, semArtigo, umCliente } from "./consultor-util";
 import type { Etapa } from "./mock";
 
@@ -37,8 +38,13 @@ export type Tema = {
   resposta: (c: Contexto, hoje: Date, pergunta: string) => Resposta;
 };
 
-const m = metricasHoje;
-const l = liderBusca;
+// Números da empresa atual. O motor chama usarMetricas(ctx) antes de montar cada resposta.
+let m: Metricas = metricasHoje;
+let l: Lider = liderBusca;
+export function usarMetricas(c: Contexto) {
+  m = c.diagnostico.metricas;
+  l = c.diagnostico.lider;
+}
 
 export const TEMAS: Tema[] = [
   // ───────── Comece aqui
@@ -149,7 +155,7 @@ export const TEMAS: Tema[] = [
     titulo: "Preciso responder avaliação boa?",
     gatilhos: ["!avaliacao boa", "!avaliacao positiva", "elogio", "elogiou", "!5 estrelas", "!cinco estrelas", "agradecer"],
     resposta: ({ kit }) => ({
-      texto: `Sim, todas, inclusive as de 5 estrelas sem texto. Mostra que tem gente cuidando, e quem está decidindo percebe. Você respondeu ${m.respostasAvaliacoes}% das suas avaliações.\n\nPersonalize com o nome e, se der, um detalhe do atendimento:\n“${kit.respostasAvaliacao[0].texto}”\n\nVarie o texto. A mesma resposta copiada em todas parece robô. Responder as antigas também vale.`,
+      texto: `Sim, todas, inclusive as de 5 estrelas sem texto. Mostra que tem gente cuidando, e quem está decidindo percebe. ${m.respostasAvaliacoes === null ? "" : `Você respondeu ${m.respostasAvaliacoes}% das suas avaliações.`}\n\nPersonalize com o nome e, se der, um detalhe do atendimento:\n“${kit.respostasAvaliacao[0].texto}”\n\nVarie o texto. A mesma resposta copiada em todas parece robô. Responder as antigas também vale.`,
       linkKit: true,
     }),
   },
@@ -221,7 +227,7 @@ export const TEMAS: Tema[] = [
     titulo: "Quantas vezes por semana devo postar, e em que horário?",
     gatilhos: ["!quantas vezes", "frequencia", "!melhor horario", "!melhor hora", "!todo dia", "!quantos posts", "horario de postar"],
     resposta: () => ({
-      texto: `Constância ganha de quantidade. Três posts por semana que você consegue manter rendem mais do que um por dia durante duas semanas e depois nada. Hoje você posta ${m.postsPorSemana} por semana.\n\nHorário: não existe hora mágica que vale para todo mundo. Nas estatísticas do Instagram (Painel profissional), veja em que horários os seus seguidores mais ficam online. Publique perto do pico e compare por 4 semanas antes de mudar.`,
+      texto: `Constância ganha de quantidade. Três posts por semana que você consegue manter rendem mais do que um por dia durante duas semanas e depois nada. ${m.postsPorSemana === null ? "" : `Hoje você posta ${m.postsPorSemana} por semana.`}\n\nHorário: não existe hora mágica que vale para todo mundo. Nas estatísticas do Instagram (Painel profissional), veja em que horários os seus seguidores mais ficam online. Publique perto do pico e compare por 4 semanas antes de mudar.`,
     }),
   },
   {
@@ -403,7 +409,7 @@ export const TEMAS: Tema[] = [
     titulo: "Preciso de um site novo?",
     gatilhos: ["!site", "landing", "pagina", "!loja virtual", "ecommerce", "dominio"],
     resposta: ({ segmento: s }) => ({
-      texto: `Pelo seu diagnóstico, sim: seu site tem nota ${m.velocidadeSite}/100 de velocidade no celular e não deixa claro como ${s.acao}. É a parte do Score que o kit não resolve.\n\nUm bom site de negócio local faz três coisas na primeira tela: diz o que você faz, onde, e tem um botão para ${s.acao}. Isso já é trabalho de profissional. Na aba Com a Elev8 você vê as opções com preço e o desconto que vale para você.`,
+      texto: `${m.velocidadeSite === null ? `Pelo seu diagnóstico, sim: não encontramos um site seu que abra no celular.` : (m.velocidadeSite ?? 0) >= 70 && (m.siteClaro ?? 0) >= 70 ? `Pelo seu diagnóstico, não é urgente: seu site tem nota ${m.velocidadeSite}/100 de velocidade e explica o que você faz. Melhor investir antes em avaliações e no Google.` : `Pelo seu diagnóstico, sim: seu site tem nota ${m.velocidadeSite}/100 de velocidade no celular e não deixa claro como ${s.acao}.`} É a parte do Score que o kit não resolve.\n\nUm bom site de negócio local faz três coisas na primeira tela: diz o que você faz, onde, e tem um botão para ${s.acao}. Isso já é trabalho de profissional. Na aba Com a Elev8 você vê as opções com preço e o desconto que vale para você.`,
       linkElev8: true,
     }),
   },

@@ -4,7 +4,7 @@
   todas leem daqui. Na fase 2, os dados vêm do Google e do formulário; na fase 3, a IA reescreve
   os textos dentro desta mesma estrutura.
 */
-import { aplicarKit, calcularScore } from "./score";
+import { aplicarKit, calcularScore, type Lider, type Metricas } from "./score";
 import { liderBusca, metricasHoje, type Diagnostico, type Status } from "./mock";
 import { segmentos, type Segmento, type SegmentoId } from "./segmentos";
 import type { Empresa } from "./posts";
@@ -58,6 +58,20 @@ export type Kit = {
 
 export type Contexto = { empresa: EmpresaDemo; segmento: Segmento; diagnostico: Diagnostico; kit: Kit };
 
+/** Dados de uma empresa de verdade, vindos do Google, do site e das respostas do dono (salvos no banco). */
+export type DadosReais = {
+  id: string;
+  empresa: EmpresaDemo;
+  metricas: Metricas;
+  lider: Lider;
+  liderEtapas: { encontrado: number; entendido: number; escolhido: number };
+  ranking: { nome: string; nota: number }[]; // até 3 concorrentes, na ordem da busca
+  posicao: number | null; // posição na busca do Google (1 = primeiro); null = fora das 20 primeiras
+  dataISO: string;
+  feitas: number;
+  linkAvaliacao: string;
+};
+
 function statusEtapa(nota: number, lider: number): Status {
   if (nota >= lider) return "frente";
   if (nota >= lider - 15) return "media";
@@ -65,13 +79,27 @@ function statusEtapa(nota: number, lider: number): Status {
 }
 
 /** Nunca falha: nicho desconhecido ou ausente cai na clínica de estética de exemplo. */
-export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Contexto {
-  // Protótipo: o diagnóstico é "de hoje". Na fase 2, a data vem do banco.
-  const e = empresasDemo.find((x) => x.segmento === nicho) ?? empresasDemo[0];
-  const s = segmentos[e.segmento as SegmentoId];
-  const hoje = calcularScore(metricasHoje, liderBusca);
-  const comKit = calcularScore(aplicarKit(metricasHoje), liderBusca);
+export function contexto(nicho?: string, dataDiagnostico: Date = new Date(), real?: DadosReais): Contexto {
+  // Sem dados reais: empresa de exemplo do nicho, com diagnóstico "de hoje".
+  const e = real?.empresa ?? empresasDemo.find((x) => x.segmento === nicho) ?? empresasDemo[0];
+  const s = segmentos[e.segmento as SegmentoId] ?? segmentos.generico;
+  const m = real?.metricas ?? metricasHoje;
+  const l = real?.lider ?? liderBusca;
+  if (real) dataDiagnostico = new Date(real.dataISO);
+  const hoje = calcularScore(m, l);
+  const comKit = calcularScore(aplicarKit(m), l);
   const [c1, c2, c3] = e.concorrentes;
+  const lid = real?.liderEtapas ?? { encontrado: 92, entendido: 84, escolhido: 80 };
+  const ranking = real
+    ? [...real.ranking.map((r) => ({ nome: r.nome, nota: r.nota })), { nome: "Você", nota: hoje.total, voce: true }].sort((a, b) => b.nota - a.nota)
+    : [
+        { nome: c1, nota: 86 },
+        { nome: c2, nota: 74 },
+        { nome: c3, nota: 57 },
+        { nome: "Você", nota: hoje.total, voce: true },
+      ];
+  const resumoMaps = real ? (real.posicao ? `${real.posicao}º no Google Maps` : "Fora das 20 primeiras no Google Maps") : "4º no Google Maps";
+  const diasDesde = Math.max(0, Math.floor((Date.now() - dataDiagnostico.getTime()) / 864e5));
   const busca = `${e.buscaTermo} em ${e.cidade}`;
   const pedidoAvaliacao = `Oi, [nome]! Aqui é da equipe ${e.nome}. Foi um prazer ${s.atender}. Se fizer sentido para você, deixa uma avaliação rapidinha sobre sua experiência no Google? Leva menos de 1 minuto e ajuda outras pessoas a nos conhecerem: [link]. Obrigado!`;
 
@@ -84,18 +112,16 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
     dataISO: dataDiagnostico.toISOString(),
     nota: hoje.total,
     potencialComKit: comKit.total,
-    ranking: [
-      { nome: c1, nota: 86 },
-      { nome: c2, nota: 74 },
-      { nome: c3, nota: 57 },
-      { nome: "Você", nota: hoje.total, voce: true },
-    ],
+    ranking,
+    metricas: m,
+    lider: l,
+    real: !!real,
     etapas: [
-      { chave: "encontrado", nome: "Encontrado", pergunta: "Você aparece quando procuram?", nota: hoje.encontrado, lider: 92, status: statusEtapa(hoje.encontrado, 92), resumo: "4º no Google Maps", solucaoKit: "Google Perfil otimizado" },
-      { chave: "entendido", nome: "Entendido", pergunta: "Seu perfil explica o que você faz?", nota: hoje.entendido, lider: 84, status: statusEtapa(hoje.entendido, 84), resumo: "Bio não diz o que você faz nem como contratar", solucaoKit: "Perfil reescrito e 12 posts" },
-      { chave: "escolhido", nome: "Escolhido", pergunta: "Há motivos para confiar em você?", nota: hoje.escolhido, lider: 80, status: statusEtapa(hoje.escolhido, 80), resumo: `${metricasHoje.avaliacoes} avaliações (líder: ${liderBusca.avaliacoes})`, solucaoKit: "Kit de avaliações com QR code" },
+      { chave: "encontrado", nome: "Encontrado", pergunta: "Você aparece quando procuram?", nota: hoje.encontrado, lider: lid.encontrado, status: statusEtapa(hoje.encontrado, lid.encontrado), resumo: resumoMaps, solucaoKit: "Google Perfil otimizado" },
+      { chave: "entendido", nome: "Entendido", pergunta: "Seu perfil explica o que você faz?", nota: hoje.entendido, lider: lid.entendido, status: statusEtapa(hoje.entendido, lid.entendido), resumo: m.bioClara === false ? "Bio não diz o que você faz nem como contratar" : m.siteClaro !== null && m.siteClaro < 60 ? "Site não deixa claro como contratar" : "Perfil e site explicam o que você faz", solucaoKit: "Perfil reescrito e 12 posts" },
+      { chave: "escolhido", nome: "Escolhido", pergunta: "Há motivos para confiar em você?", nota: hoje.escolhido, lider: lid.escolhido, status: statusEtapa(hoje.escolhido, lid.escolhido), resumo: `${m.avaliacoes} avaliações (líder: ${l.avaliacoes})`, solucaoKit: "Kit de avaliações com QR code" },
     ],
-    ia: {
+    ia: real ? undefined : {
       pergunta: `Qual ${e.genero === "a" ? "a melhor" : "o melhor"} ${e.buscaTermo} em ${e.cidade}?`,
       respostas: [
         { ia: "ChatGPT", citou: false, lista: [c1, c2, c3] },
@@ -112,7 +138,7 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
       motivo: "É o que mais pesa no seu Score Digital. A mensagem e o QR code de avaliação, com a arte para imprimir, já estão prontos.",
       botao: "Abrir mensagem pronta",
     },
-    plano: { feitas: 2, total: 12, diasParaReavaliacao: 23 },
+    plano: real ? { feitas: real.feitas, total: 12, diasParaReavaliacao: Math.max(0, 30 - diasDesde) } : { feitas: 2, total: 12, diasParaReavaliacao: 23 },
   };
 
   const precoTexto =
@@ -121,12 +147,12 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
       : `Os valores dependem de cada caso. No primeiro contato a gente entende o que você precisa e explica tudo, sem compromisso. Posso te ajudar a ${s.acao}?`;
 
   const kit: Kit = {
-    linkAvaliacao: `https://g.page/r/${e.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-")}/review`,
+    linkAvaliacao: real?.linkAvaliacao ?? `https://g.page/r/${e.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-")}/review`,
     pecas: [
-      { id: "avaliacoes", nome: "Kit de avaliações", etapa: "Escolhido", porQue: `Você tem ${metricasHoje.avaliacoes} avaliações e o 1º colocado tem ${liderBusca.avaliacoes}. É a diferença que mais pesa no seu Score Digital.`, tempo: "10 min para preparar" },
+      { id: "avaliacoes", nome: "Kit de avaliações", etapa: "Escolhido", porQue: `Você tem ${m.avaliacoes} avaliações e o 1º colocado tem ${l.avaliacoes}. É a diferença que mais pesa no seu Score Digital.`, tempo: "10 min para preparar" },
       { id: "whatsapp", nome: "WhatsApp que vende", etapa: "Escolhido", porQue: "Quem te encontra chama no WhatsApp. Uma resposta rápida e clara decide se a pessoa fecha com você ou vai para o concorrente.", tempo: "5 min para salvar" },
       { id: "perfil", nome: "Perfil reescrito", etapa: "Entendido", porQue: `Sua bio atual não diz o que você faz nem como ${s.acao}. Quem chega pela primeira vez não entende em 5 segundos.`, tempo: "5 min para trocar" },
-      { id: "google", nome: "Google Perfil otimizado", etapa: "Encontrado", porQue: `Seu perfil no Google está ${metricasHoje.perfilPreenchido}% preenchido; o do 1º colocado, 100%. Perfil completo ajuda a aparecer mais acima no Maps.`, tempo: "20 min para atualizar" },
+      { id: "google", nome: "Google Perfil otimizado", etapa: "Encontrado", porQue: `Seu perfil no Google está ${m.perfilPreenchido}% preenchido; o do 1º colocado, 100%. Perfil completo ajuda a aparecer mais acima no Maps.`, tempo: "20 min para atualizar" },
       { id: "posts", nome: "12 posts prontos", etapa: "Entendido", porQue: `Mostrar seu trabalho, bastidores e respostas às dúvidas com frequência faz o ${s.cliente === "clientes" ? "cliente" : s.cliente.replace(/s$/, "")} entender e confiar antes de chamar.`, tempo: "3 posts por semana" },
     ],
     mensagensAvaliacao: [
@@ -151,11 +177,11 @@ export function contexto(nicho?: string, dataDiagnostico: Date = new Date()): Co
     ],
     googleDescricao: `${e.nome} é ${e.tipo} em ${e.cidade}, ${e.uf}. ${e.diferencial}. Conheça ${e.servico} e fale com a gente pelo WhatsApp ou pelo telefone. Endereço: ${e.endereco}.`,
     googleFaltando: [
-      { item: "Fotos", detalhe: `Você tem ${metricasHoje.fotos}; o 1º colocado tem ${liderBusca.fotos}. Comece com 10 novas, do espaço e do seu trabalho.` },
+      { item: "Fotos", detalhe: `Você tem ${m.fotos}${real && m.fotos >= 10 ? " ou mais" : ""}; o 1º colocado tem ${l.fotos}${real && l.fotos >= 10 ? " ou mais" : ""}. Comece com 10 novas, do espaço e do seu trabalho.` },
       { item: "Serviços ou produtos", detalhe: s.permitePreco ? "Cadastre os 5 principais, com valor inicial." : "Cadastre as 5 áreas ou serviços principais (sem preço, pelas regras do seu setor)." },
       { item: "Horário completo", detalhe: "Informe também sábado e feriados." },
       { item: "Categorias secundárias", detalhe: "Adicione 2 categorias que descrevem o que mais você faz." },
-      { item: "Responder avaliações", detalhe: `${100 - metricasHoje.respostasAvaliacoes}% das suas avaliações estão sem resposta. Use os modelos do kit.` },
+      { item: "Responder avaliações", detalhe: m.respostasAvaliacoes === null ? "Responda todas as avaliações, boas e ruins. Use os modelos do kit." : `${100 - m.respostasAvaliacoes}% das suas avaliações estão sem resposta. Use os modelos do kit.` },
     ],
   };
 

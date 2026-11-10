@@ -27,12 +27,12 @@ export function recomendar(m: Metricas, lider: Lider, e: EmpresaDemo, s: Segment
   const scoreKit = calcularScore(comKit, lider).total;
   const lista: Recomendacao[] = [];
 
-  if (m.velocidadeSite < 70 || m.siteClaro < 70) {
+  if ((m.velocidadeSite ?? 0) < 70 || (m.siteClaro ?? 0) < 70) {
     const comSite = calcularScore({ ...comKit, velocidadeSite: 90, siteClaro: 90 }, lider).total;
     lista.push({
       id: "site",
       servico: vendeProduto ? "Loja virtual" : "Site ou landing page nova",
-      identificado: `Seu site tem nota ${m.velocidadeSite}/100 de velocidade no celular e não deixa claro como ${s.acao}.`,
+      identificado: m.velocidadeSite === null ? `Não encontramos um site que abra no celular. Quem procura no Google e não acha um site com o seu serviço e um botão para ${s.acao} desconfia ou vai para o concorrente.` : `Seu site tem nota ${m.velocidadeSite}/100 de velocidade no celular${(m.siteClaro ?? 0) < 70 ? ` e não deixa claro como ${s.acao}` : ""}.`,
       porQue: `É a parte do seu Score que o kit não resolve. Com o kit aplicado você chega a ${scoreKit}; com um site rápido e claro, a ${comSite} (estimativa).`,
       comoResolvemos: vendeProduto
         ? "Uma loja virtual rápida no celular, com seus produtos organizados, pagamento online e o WhatsApp sempre à vista."
@@ -69,7 +69,7 @@ export function recomendar(m: Metricas, lider: Lider, e: EmpresaDemo, s: Segment
     recomendado: publicoLocalVisual ? "meta-google" : "google-ads",
   });
 
-  if (m.postsPorSemana < 3) {
+  if (m.postsPorSemana !== null && m.postsPorSemana < 3) {
     lista.push({
       id: "redes",
       servico: "Gestão das redes sociais",

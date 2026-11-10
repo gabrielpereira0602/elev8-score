@@ -91,7 +91,7 @@ export function Simulador({ hoje, lider, ranking, pago, qs }: Props) {
                 <input
                   id="sim-bio"
                   type="checkbox"
-                  checked={m.bioClara}
+                  checked={!!m.bioClara}
                   onChange={(e) => atualizar("bioClara", e.target.checked)}
                   className="size-5 cursor-pointer accent-[var(--brand)]"
                 />
@@ -207,7 +207,7 @@ function Grupo({ icone, titulo, selo, controles, m, hoje, atualizar, extra }: Gr
         {selo && <span className="rounded-full bg-night px-2 py-0.5 text-[11px] font-semibold text-white">{selo}</span>}
       </legend>
       {controles.map((c) => {
-        const valor = m[c.chave] as number;
+        const valor = (m[c.chave] as number | null) ?? 0;
         const original = hoje[c.chave] as number;
         const id = `sim-${c.chave}`;
         return (

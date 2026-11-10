@@ -12,7 +12,6 @@
 */
 import type { Contexto } from "./contexto";
 import { PRODUTO, REGRA, descontoAtivo, formatarBRL, formatarData } from "./elev8";
-import { liderBusca, metricasHoje } from "./mock";
 import { ETAPA_FRASE, maiorPerda } from "./consultor-util";
 import { responder } from "./assistente";
 
@@ -82,7 +81,7 @@ export function emails(ctx: Contexto, hoje = new Date()): Email[] {
       previa: "Leva 2 minutos e é o que mais pesa no seu Score.",
       paragrafos: [
         `Oi! Gabriel aqui de novo.`,
-        `No seu painel tem uma mensagem pronta para pedir avaliação no Google. Avaliação é o que mais separa você do 1º colocado: você tem ${metricasHoje.avaliacoes}, ${lider.nome} tem ${liderBusca.avaliacoes}.`,
+        `No seu painel tem uma mensagem pronta para pedir avaliação no Google. Avaliação é o que mais separa você do 1º colocado: você tem ${d.metricas.avaliacoes}, ${lider.nome} tem ${d.lider.avaliacoes}.`,
         `Mande hoje para 5 ${s.cliente} que gostaram do seu trabalho. É só copiar e colar.`,
       ],
       botao: { texto: "Copiar a mensagem", href: `${painel}#presente` },

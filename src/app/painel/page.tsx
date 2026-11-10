@@ -43,7 +43,7 @@ export default async function VisaoGeral({ searchParams }: Props) {
             <ScoreCard nota={d.nota} ranking={d.ranking} busca={d.busca} data={d.dataAnalise} />
           </div>
           <div className="lg:col-span-5">
-            {pago ? <NextAction acao={d.proximaAcao} /> : <IACheck pergunta={d.ia.pergunta} respostas={d.ia.respostas} data={d.dataAnalise} />}
+            {pago || !d.ia ? <NextAction acao={d.proximaAcao} /> : <IACheck pergunta={d.ia.pergunta} respostas={d.ia.respostas} data={d.dataAnalise} />}
           </div>
         </div>
 

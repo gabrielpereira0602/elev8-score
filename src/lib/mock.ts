@@ -34,7 +34,13 @@ export type Diagnostico = {
   potencialComKit: number;
   ranking: Concorrente[];
   etapas: Etapa[];
-  ia: { pergunta: string; respostas: RespostaIA[] };
+  /** Teste das IAs: só existe quando foi feito de verdade (no protótipo, exemplo). */
+  ia?: { pergunta: string; respostas: RespostaIA[] };
+  /** Números medidos desta empresa e do 1º colocado da mesma busca. */
+  metricas: Metricas;
+  lider: Lider;
+  /** true quando os números vêm do Google e do site desta empresa; false no protótipo. */
+  real: boolean;
   presente: { titulo: string; motivo: string; mensagem: string };
   proximaAcao: { titulo: string; motivo: string; botao: string };
   plano: { feitas: number; total: number; diasParaReavaliacao: number };
