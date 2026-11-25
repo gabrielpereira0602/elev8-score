@@ -6,7 +6,7 @@
 import type { Analise, FormKit } from "./analise";
 
 // Lido em tempo de execução (colchetes evitam que o build fixe o valor). Aceita os dois nomes.
-const URL_BASE = () => (process.env["SUPABASE_URL"] ?? process.env["NEXT_PUBLIC_SUPABASE_URL"] ?? "").replace(/\/$/, "");
+const URL_BASE = () => (process.env["SUPABASE_URL"] ?? process.env["NEXT_PUBLIC_SUPABASE_URL"] ?? "").trim().replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
 const CHAVE = () => process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 export const bancoConfigurado = () => URL_BASE().length > 0 && CHAVE().length > 0;
 

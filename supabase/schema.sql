@@ -33,3 +33,5 @@ create table if not exists public.descadastros (
 -- Segurança: RLS ligado e nenhuma política pública. Só o servidor (chave service_role) lê e grava.
 alter table public.diagnosticos enable row level security;
 alter table public.descadastros enable row level security;
+
+grant all on public.diagnosticos, public.descadastros to service_role;
