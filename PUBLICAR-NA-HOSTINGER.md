@@ -34,12 +34,15 @@ Sem chaves, o site roda como protótipo (empresas de exemplo). Com as chaves aba
 | `ADMIN_PASSWORD` | Uma senha forte criada por você. Protege o `/admin`. |
 | `GOOGLE_PLACES_API_KEY` | Google Cloud > APIs e serviços > Credenciais (com Places API (New) e PageSpeed Insights API ativadas) |
 | `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API |
-| `MERCADOPAGO_ACCESS_TOKEN` | Mercado Pago Developers > Suas integrações > Credenciais de produção |
+| `KIWIFY_WEBHOOK_TOKEN` | Kiwify > Apps > Webhooks (o token do webhook criado no passo abaixo) |
 | `SITE_URL` (opcional) | O endereço final do site, sem barra no fim |
 
 **Banco de dados (uma vez só):** no Supabase, abra **SQL Editor > New query**, cole o conteúdo de `supabase/schema.sql` e clique em **Run**.
 
-**Mercado Pago:** o aviso automático de pagamento é configurado sozinho em cada compra (vai para `/api/webhooks/mercadopago`). Não precisa cadastrar nada no painel do Mercado Pago.
+**Kiwify (uma vez só):**
+1. **Apps > Webhooks > Criar webhook.** URL: `https://SEU-SITE/api/webhooks/kiwify`. Produto: Elev8 Score. Eventos: **Compra aprovada**, **Compra reembolsada** e **Chargeback**. Copie o **token** para a variável `KIWIFY_WEBHOOK_TOKEN`.
+2. **Produto > Configurações > Página de obrigado personalizada:** `https://SEU-SITE/obrigado`. É ela que devolve o cliente ao painel dele.
+3. O botão "Liberar kit" já abre o checkout com o código do diagnóstico (`sck`). Se alguém comprar pelo link direto, o sistema acha o diagnóstico pelo e-mail da compra.
 
 Depois de salvar as variáveis, faça um novo deploy na Hostinger para o app ler as chaves.
 

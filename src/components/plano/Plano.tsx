@@ -141,7 +141,7 @@ export function Plano({ segmento, qs, diasParaReavaliacao, codigo, feitasIniciai
             <p className="mt-0.5 text-sm text-muted">Refazemos a análise e mostramos o antes e depois do seu Score Digital, ao lado dos mesmos concorrentes.</p>
             <p className="mt-2 flex items-start gap-2 text-sm text-muted">
               <ShieldCheck size={16} className="mt-0.5 shrink-0 text-good" aria-hidden />
-              Fez pelo menos 10 das 12 ações e o Score não subiu? A garantia devolve os R$ 97.
+              Fez pelo menos 10 das 12 ações e o Score não subiu? A garantia devolve o valor pago.
             </p>
           </div>
         </div>

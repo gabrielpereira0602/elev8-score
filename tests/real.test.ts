@@ -2,7 +2,8 @@ import { contexto } from "../src/lib/contexto";
 import { montarAnalise, montarDadosReais, perfilPreenchido, termoDeBusca, type Respostas } from "../src/lib/real/analise";
 import type { LugarGoogle } from "../src/lib/real/google";
 import { clarezaDoHtml } from "../src/lib/real/site";
-import { liberaKit } from "../src/lib/real/mercadopago";
+import { createHmac } from "node:crypto";
+import { assinaturaValida, interpretar, linkCheckout } from "../src/lib/real/kiwify";
 import { registroParaLead } from "../src/lib/real/leads";
 import { iguais, tokenAdmin } from "../src/lib/real/servidor";
 import { calcularScore } from "../src/lib/score";
@@ -87,10 +88,17 @@ confere("site vazio = 0", clarezaDoHtml("<html><body></body></html>", "Campinas"
 
 // Pagamento
 const id = "11111111-1111-4111-8111-111111111111";
-confere("pagamento aprovado libera", liberaKit({ id: 1, status: "approved", external_reference: id, transaction_amount: 97 }, id));
-confere("pagamento pendente não libera", !liberaKit({ id: 1, status: "pending", external_reference: id, transaction_amount: 97 }, id));
-confere("pagamento de outro diagnóstico não libera", !liberaKit({ id: 1, status: "approved", external_reference: "outro", transaction_amount: 97 }, id));
-confere("pagamento com valor menor não libera", !liberaKit({ id: 1, status: "approved", external_reference: id, transaction_amount: 1 }, id));
+const corpoK = JSON.stringify({ order_id: "p1", order_status: "paid", webhook_event_type: "order_approved", TrackingParameters: { sck: id } });
+const sig = createHmac("sha1", "tk").update(corpoK).digest("hex");
+confere("link da Kiwify leva o código do diagnóstico", new URL(linkCheckout(id)).searchParams.get("sck") === id && linkCheckout(id).startsWith("https://pay.kiwify.com.br/"));
+confere("webhook com assinatura certa passa", assinaturaValida(corpoK, sig, "tk"));
+confere("webhook com token errado é recusado", !assinaturaValida(corpoK, createHmac("sha1", "outro").update(corpoK).digest("hex"), "tk"));
+confere("webhook com corpo alterado é recusado", !assinaturaValida(corpoK.replace("paid", "pago"), sig, "tk"));
+confere("webhook sem assinatura é recusado", !assinaturaValida(corpoK, null, "tk") && !assinaturaValida(corpoK, "abc", "tk"));
+confere("compra aprovada é lida", interpretar(JSON.parse(corpoK)).tipo === "aprovado" && interpretar(JSON.parse(corpoK)).sck === id);
+confere("pix gerado não libera", interpretar({ order_status: "waiting_payment", webhook_event_type: "pix_created" }).tipo === "outro");
+confere("reembolso é lido", interpretar({ order_status: "refunded", webhook_event_type: "order_refunded" }).tipo === "estornado");
+confere("chargeback é lido", interpretar({ webhook_event_type: "chargeback" }).tipo === "estornado");
 
 // Admin
 const lead = registroParaLead({

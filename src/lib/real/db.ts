@@ -69,6 +69,12 @@ export async function atualizar(id: string, patch: Partial<Registro>): Promise<R
   return r[0] ?? null;
 }
 
+/** Diagnóstico mais recente ainda não pago com este e-mail (compra feita pelo link direto, sem código). */
+export async function pendentePorEmail(email: string): Promise<Registro | null> {
+  const r = await rest<Registro[]>(`diagnosticos?contato->>email=ilike.${encodeURIComponent(email)}&pago=eq.false&order=criado_em.desc&limit=1`);
+  return r[0] ?? null;
+}
+
 export async function listar(limite = 500): Promise<Registro[]> {
   return rest<Registro[]>(`diagnosticos?order=criado_em.desc&limit=${limite}`);
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Clock, Lock } from "lucide-react";
 import type { Peca } from "@/lib/contexto";
 import { Card } from "../ui";
+import { PRODUTO, formatarBRL } from "@/lib/elev8";
 
 /** Versão grátis da aba Kit: mostra o que vem, o porquê de cada peça e o conteúdo desfocado. */
 export function KitLocked({ empresa, pecas, qs }: { empresa: string; pecas: Peca[]; qs: string }) {
@@ -16,7 +17,7 @@ export function KitLocked({ empresa, pecas, qs }: { empresa: string; pecas: Peca
           href={`/painel${qs}#oferta`}
           className="inline-flex items-center gap-2 rounded-[var(--radius-control)] bg-brand px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-brand-hover"
         >
-          Liberar por R$ 97
+          Liberar por {formatarBRL(PRODUTO.preco)}
           <ArrowRight size={18} aria-hidden />
         </Link>
       </div>

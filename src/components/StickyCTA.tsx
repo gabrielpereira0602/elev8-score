@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
+import { PRODUTO, formatarBRL } from "@/lib/elev8";
 
 /** Celular, versão grátis: depois que a pessoa rola a tela, o botão de compra fica sempre à mão, acima da navegação. */
 export function StickyCTA() {
@@ -34,7 +35,7 @@ export function StickyCTA() {
       >
         <span>
           <span className="block whitespace-nowrap text-[12px] text-white/60">Preço de lançamento</span>
-          <span className="font-display text-lg font-extrabold">R$ 97</span>
+          <span className="font-display text-lg font-extrabold">{formatarBRL(PRODUTO.preco)}</span>
         </span>
         <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-brand px-4 py-2.5 text-sm font-semibold">
           Liberar kit e consultor

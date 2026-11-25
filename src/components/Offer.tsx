@@ -1,6 +1,7 @@
 import { ArrowRight, Check, ShieldCheck, Sparkles } from "lucide-react";
 import { faixaScore, type Concorrente } from "@/lib/mock";
 import { Card, Origem } from "./ui";
+import { PRODUTO, formatarBRL } from "@/lib/elev8";
 
 type Props = {
   empresa: string;
@@ -108,10 +109,10 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
           <div>
             <p className="mb-2 inline-flex rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-ink">Preço de lançamento</p>
             <p className="text-sm text-muted">
-              De <s>R$ 197</s> por
+              De <s>{formatarBRL(PRODUTO.precoReferencia)}</s> por
             </p>
-            <p className="font-display text-5xl font-extrabold leading-none tracking-tight">R$ 97</p>
-            <p className="mt-2 text-sm text-muted">Pagamento único no Pix ou cartão. Sem mensalidade.</p>
+            <p className="font-display text-5xl font-extrabold leading-none tracking-tight">{formatarBRL(PRODUTO.preco)}</p>
+            <p className="mt-2 text-sm text-muted">Pagamento único no Pix ou cartão, com opção de parcelar. Sem mensalidade.</p>
           </div>
           <a
             href={hrefLiberar}
@@ -124,7 +125,7 @@ export function Offer({ empresa, nota, potencial, ranking, itens, bioPrevia, hre
             <ShieldCheck size={18} className="mt-0.5 shrink-0 text-good" aria-hidden />
             <span>
               <b className="font-semibold text-ink">Garantia do Score.</b> Fez as ações do plano e seu Score Digital não subiu em 30
-              dias? Devolvemos os R$ 97. Comparamos com os concorrentes como estavam no dia do diagnóstico, para contar só o que você fez.{" "}
+              dias? Devolvemos o valor pago. Comparamos com os concorrentes como estavam no dia do diagnóstico, para contar só o que você fez.{" "}
               <a href="/termos#garantia" className="underline underline-offset-2 hover:text-ink">
                 Como funciona
               </a>

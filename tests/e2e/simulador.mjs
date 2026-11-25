@@ -1,6 +1,9 @@
-// Simulador local de Google Places, Supabase (REST) e Mercado Pago, para o teste de ponta a ponta.
+// Simulador local de Google Places, Supabase (REST) e checkout da Kiwify, para o teste de ponta a ponta.
+// Site em localhost:3102 com KIWIFY_CHECKOUT_URL=http://localhost:4010/kiwify e KIWIFY_WEBHOOK_TOKEN=token-teste.
 import http from "node:http";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID } from "node:crypto";
+const SITE = "http://localhost:3102";
+const assinar = (corpo, token) => createHmac("sha1", token).update(corpo).digest("hex");
 
 const db = { diagnosticos: [], descadastros: [] };
 const lugar = (id, nome, av, fotos, extra = {}) => ({
@@ -22,12 +25,15 @@ http.createServer(async (req, res) => {
   if (u.pathname === "/v1/places:autocomplete") return enviar(res, 200, { suggestions: [{ placePrediction: { placeId: "ChIJ_TESTE", structuredFormat: { mainText: { text: empresa.displayName.text }, secondaryText: { text: "Campinas - SP" } } } }] });
   if (u.pathname.startsWith("/v1/places/")) return enviar(res, 200, empresa);
   if (u.pathname === "/v1/places:searchText") return enviar(res, 200, { places: busca });
-  // Mercado Pago
-  if (u.pathname === "/checkout/preferences") {
-    const b = await corpo(req);
-    return enviar(res, 200, { id: "pref1", init_point: `${b.back_urls.success}&payment_id=777&status=approved` });
+  // Kiwify: "paga" na hora, manda um webhook falsificado (deve ser recusado) e o verdadeiro, e volta para o obrigado.
+  if (u.pathname === "/kiwify") {
+    const pedido = JSON.stringify({ order_id: "ped-1", order_status: "paid", webhook_event_type: "order_approved", Customer: { email: "ana@teste.com" }, TrackingParameters: { sck: u.searchParams.get("sck"), src: u.searchParams.get("src") } });
+    const url = `${SITE}/api/webhooks/kiwify?signature=`;
+    const falso = await fetch(url + assinar(pedido, "token-errado"), { method: "POST", headers: { "Content-Type": "application/json" }, body: pedido });
+    const certo = await fetch(url + assinar(pedido, "token-teste"), { method: "POST", headers: { "Content-Type": "application/json" }, body: pedido });
+    res.writeHead(302, { Location: `${SITE}/obrigado?falso=${falso.status}&certo=${certo.status}` });
+    return res.end();
   }
-  if (u.pathname === "/v1/payments/777") return enviar(res, 200, { id: 777, status: "approved", external_reference: db.diagnosticos[0]?.id, transaction_amount: 97 });
   // Supabase REST
   const m = u.pathname.match(/^\/rest\/v1\/(\w+)$/);
   if (m) {

@@ -51,7 +51,7 @@ export const REGRA = {
 
 /** O produto em si. Score Vivo: preço de teste (hipótese), ajustar com os primeiros números. */
 export const PRODUTO = {
-  preco: 97,
+  preco: 98.5,
   precoReferencia: 197,
   acessoMeses: 12,
   scoreVivoMensal: 39,

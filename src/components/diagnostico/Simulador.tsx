@@ -6,6 +6,7 @@ import { ArrowRight, Globe, Package, RotateCcw, Sparkles } from "lucide-react";
 import { aplicarKit, calcularScore, type Lider, type Metricas } from "@/lib/score";
 import { faixaScore, type Concorrente } from "@/lib/mock";
 import { Card, Origem, StatusBadge } from "../ui";
+import { PRODUTO, formatarBRL } from "@/lib/elev8";
 
 type Props = { hoje: Metricas; lider: Lider; ranking: Concorrente[]; pago: boolean; qs: string };
 
@@ -174,7 +175,7 @@ export function Simulador({ hoje, lider, ranking, pago, qs }: Props) {
                 href={pago ? `/painel/kit${qs}` : `/painel${qs}#oferta`}
                 className="flex items-center justify-between gap-3 rounded-[var(--radius-control)] bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover"
               >
-                {pago ? "Abrir meu kit" : "Liberar meu kit por R$ 97"}
+                {pago ? "Abrir meu kit" : `Liberar meu kit por ${formatarBRL(PRODUTO.preco)}`}
                 <ArrowRight size={16} className="shrink-0" aria-hidden />
               </Link>
             )}

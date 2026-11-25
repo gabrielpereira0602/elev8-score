@@ -24,7 +24,7 @@ export default function Termos() {
 
       <Secao titulo="2. Kit pronto">
         <ul>
-          <li>Preço: {formatarBRL(PRODUTO.preco)}, pagamento único (Pix ou cartão), sem mensalidade.</li>
+          <li>Preço: {formatarBRL(PRODUTO.preco)}, pagamento único pela Kiwify (Pix ou cartão, com opção de parcelar), sem mensalidade.</li>
           <li>Entrega 100% digital, no seu painel, logo após a confirmação do pagamento. Não enviamos materiais físicos: o QR code vem com arte para você imprimir.</li>
           <li>Os 12 posts são liberados semana a semana, junto com o plano de 30 dias. As demais peças ficam disponíveis na hora.</li>
           <li>

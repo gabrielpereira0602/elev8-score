@@ -31,7 +31,7 @@ export default function Privacidade() {
             <b>Uso do painel:</b> páginas abertas, ações do plano marcadas, perguntas feitas ao consultor e serviços da Elev8 consultados.
           </li>
           <li>
-            <b>Pagamento:</b> processado pelo Mercado Pago. Não recebemos nem guardamos dados do seu cartão.
+            <b>Pagamento:</b> processado pela Kiwify. Não recebemos nem guardamos dados do seu cartão.
           </li>
         </ul>
       </Secao>
@@ -59,7 +59,7 @@ export default function Privacidade() {
           <li>Hostinger (hospedagem do site) e Supabase (banco de dados e login);</li>
           <li>Google (dados públicos do Perfil da Empresa e medição de velocidade do site);</li>
           <li>Provedor de inteligência artificial, para escrever os textos do kit a partir dos dados do negócio;</li>
-          <li>Mercado Pago (pagamento) e Resend (envio de e-mails).</li>
+          <li>Kiwify (pagamento) e Resend (envio de e-mails).</li>
         </ul>
         <p>Não vendemos dados pessoais. Alguns fornecedores podem guardar dados fora do Brasil, com as garantias exigidas pela LGPD.</p>
       </Secao>
